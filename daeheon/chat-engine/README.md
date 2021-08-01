@@ -7,7 +7,7 @@ package.json
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "node ./bin/www"
+    "start": "node app.js"
   },
   "dependencies": {
     "JSON": "^1.0.0",
