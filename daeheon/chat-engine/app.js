@@ -1,18 +1,18 @@
-const createError = require('http-errors');
-const express = require('express');
-const path = require('path');
-const cookieParser = require('cookie-parser');
-const logger = require('morgan');
-const redis = require('redis');
-const client = redis.createClient(6379, "127.0.0.1");
-const JSON = require('JSON');
-const _ = require('underscore');
+var createError = require('http-errors');
+var express = require('express');
+var path = require('path');
+var cookieParser = require('cookie-parser');
+var logger = require('morgan');
+var redis = require('redis');
+var client = redis.createClient(6379, "127.0.0.1");
+var JSON = require('JSON');
+var _ = require('underscore');
 
-const app = express();
+var app = express();
 
-const server = require('http').Server(app);
-const io = require('socket.io')(server);
-server.listen(3001, "127.0.0.1");
+var server = require('http').Server(app);
+var io = require('socket.io')(server);
+server.listen(3000, "127.0.0.1");
 
 function addZero(i) {
     if (i < 10) {
@@ -23,7 +23,7 @@ function addZero(i) {
 
 io.on('connection', function(socket){
 
-    let userName = socket.id;
+    var userName = socket.id;
 
     io.to(socket.id).emit('change name', userName);
 
@@ -37,7 +37,7 @@ io.on('connection', function(socket){
     });
 
     socket.on('send message', function(text){
-        let date = new Date();
+        var date = new Date();
         client.rpush('chatLogs', JSON.stringify({
             userName: socket.id,
             message: text,
@@ -51,10 +51,11 @@ io.on('connection', function(socket){
     });
 });
 
-// view engine setup
+// views engine setup
+app.set('views engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'ejs');
 
+app.use('/javascripts', express.static(__dirname + '/node_modules'));
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -62,11 +63,12 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')))
 
 
+
 app.get('/', function(req, res, next) {
-    let chatLogs;
+    var chatLogs;
     client.lrange('chatLogs', -10, -1, (err, charArr) => {
         chatLogs = _.map(charArr, function(char){ return JSON.parse(char); });
-        res.render('index', {
+        res.render('/index', {
             title: 'Chat App',
             chatLogs: chatLogs
         });

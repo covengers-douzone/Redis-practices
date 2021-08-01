@@ -1,0 +1,14 @@
+**/node_modules
+
+**/.idea
+**/build/
+**/.iml
+
+**/.classpath
+**/.project
+**/.settings/
+**/target/
+
+**/.DS_Store
+**/desktop.ini
+© 2021 GitHub, Inc.
