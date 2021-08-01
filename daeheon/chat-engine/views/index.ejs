@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=0,maximum-scale=10">
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/stylesheets/lib/bootstrap.min.css">
+    <link rel="stylesheet" href="/stylesheets/custom.ui.css">
+</head>
+<body>
+<main id="boxApp"></main>
+<script src="/javascripts/lib/require.min.js"></script>
+<script src="/javascripts/app/config.js"></script>
+<script src="/javascripts/app/chat.js"></script>
+<script>
+    let chatLogs = [];
+    <% chatLogs.forEach(function(chatLog) { %>
+    chatLogs.push({
+        userName: '<%= chatLog.userName %>',
+        message: '<%= chatLog.message %>',
+        date: '<%= chatLog.date %>'
+    });
+    <% }); %>
+</script>
+</body>
+</html>
