@@ -3,11 +3,11 @@
 package.json
 ```json
 {
-  "name": "app",
+  "name": "index",
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "node app.js"
+    "start": "node index.js"
   },
   "dependencies": {
     "JSON": "^1.0.0",

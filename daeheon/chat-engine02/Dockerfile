@@ -19,8 +19,8 @@
 # https://hub.docker.com/_/node
 FROM node:12-slim
 
-# Create and change to the app directory.
-WORKDIR /usr/src/app
+# Create and change to the index directory.
+WORKDIR /usr/src/index
 
 # Copy application dependency manifests to the container image.
 # A wildcard is used to ensure copying both package.json AND package-lock.json (when available).
