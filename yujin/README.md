@@ -1,5 +1,9 @@
 # Redis
 
+* practice
+  * [basic-pub_sub](basic-pub_sub)
+    * redis pub sub 예제 및 연습
+
 ## Redis?
 * cache-server X, database O
 * In-Memory Database

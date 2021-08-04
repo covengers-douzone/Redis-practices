@@ -26,6 +26,7 @@
   * use
     * redis
       * redis server에 데이터 넣기 X
+      * pub/sub
     * express
   * chatting example
     * 방 한개
@@ -36,7 +37,17 @@
     |닉네임 입력|챗 첫화면|채팅|
     |:---:|:---:|:---:|
     |<img src="../images/chat_practice_1.jpg"/>|<img alt="image2" src="../images/chat_practice_2.jpg"/>| <img alt="image3" src="../images/chat_practice_3.jpg"/>|
-
+* [store_chat_ex](store_chat_ex)
+  * use
+    * redis
+      * pub/sub X
+      * 데이터 저장
+    * express
+    * socket.io
+  * 특징
+    * 방 한개
+    * pub/sub 대신 socket.io 사용
+    * 데이터를 redis에 저장해서 예전 대화를 불러올 수 있음
 
 ## Usage
 
