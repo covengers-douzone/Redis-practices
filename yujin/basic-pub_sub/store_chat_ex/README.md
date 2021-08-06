@@ -24,7 +24,7 @@
   store_chat_ex
     |--- package.json           # desc : project
     |--- package-lock.json      # desc : version of packages
-    |--- index.js               # application init: server setting, routing,...
+    |--- index.mjs               # application init: server setting, routing,...
     |--- /views
             |--- index.ejs      # entry page: set user-name, choose room
             |--- chat.ejs       # chat page: view chat messages, send message 
@@ -47,7 +47,7 @@
   * ```io.on("connection", socket => {})``` : ("connection")client와 연결시, 연결된 socket에 대해 함수 실행
   * ```io.emit(message,data)``` : data를 "message"이름으로 보냄
   * ```socket.on(message,func)``` : socket이든 io(all socket?)이든 message에 해당하는 것을 받으면 func 실행
-  * 코드 예제 (index.js)
+  * 코드 예제 (index.mjs)
     ```js
     io.on("connection", socket => {
         // init : redis에 저장된 메세지들 모두 보여줌

@@ -1,14 +1,16 @@
-import logo from './assets/image/logo.svg';
-import './assets/css/App.css';
+import React, {Component} from "react";
+import {Switch, Route} from "react-router-dom";
+import {Chat, Login} from "./pages";
 
 function App() {
-  return (
-    <div id={'App'}>
-      <div id={'header'}>header</div>
-      <div id={'body'}>body</div>
-      <div id={'footer'}>footer</div>
-    </div>
-  );
+    return (
+        <div>
+            <Switch>
+                <Route path="/" exact={true} component={Login}/>
+                <Route path="/chat" exact={true} component={Chat}/>
+            </Switch>
+        </div>
+    );
 }
 
 export default App;

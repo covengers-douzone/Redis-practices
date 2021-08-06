@@ -3,9 +3,19 @@ import express from 'express';
 import * as path from 'path';
 const port = 8080;
 
+// router
+import indexRouter from './routes/index.mjs';
+
 // Application Setup
-const application = express()
-    .use(express.static(path.join(path.resolve('.'), 'public')))    // 웹서버 구동할려면 public
+const application = express();
+application
+    .use(express.static(path.join(path.resolve('.'), 'build')))    // 웹서버 구동할려면 public
+    // .all('*',function(req,res,next){
+    //             res.locals.req = req;
+    //             res.locals.res = res;
+    //             next();
+    // })
+    //.use("/chat",indexRouter);
 
 // Server Setup
 http.createServer(application)

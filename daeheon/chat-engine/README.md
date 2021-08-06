@@ -7,7 +7,7 @@ package.json
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "node index.js"
+    "start": "node index.mjs"
   },
   "dependencies": {
     "JSON": "^1.0.0",

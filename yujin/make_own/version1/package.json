@@ -2,6 +2,7 @@
   "name": "version1",
   "version": "0.1.0",
   "private": true,
+  "main": "dev-server.js",
   "dependencies": {
     "@testing-library/jest-dom": "^5.14.1",
     "@testing-library/react": "^11.2.7",
@@ -12,16 +13,18 @@
     "npm-run-all": "^4.1.5",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
+    "react-redux": "^7.2.4",
+    "react-router-dom": "^5.2.0",
     "react-scripts": "4.0.3",
+    "redux": "^4.1.1",
     "web-vitals": "^1.1.2"
   },
   "scripts": {
-    "start": "node server/server.mjs",
-    "start:parallel": "npm-run-all --parallel start:**",
+    "debug": "react-scripts build && nodemon server/server.mjs",
+    "start": "npm-run-all --parallel start:**",
     "start:client": "react-scripts start",
     "start:server": "node server/server.mjs",
     "build": "react-scripts build",
-    "debug": "nodemon server/server.mjs",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },

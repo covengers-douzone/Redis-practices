@@ -54,5 +54,5 @@
 * 실행
   ```bash
   npm start
-  node index.js
+  node index.mjs
   ```
