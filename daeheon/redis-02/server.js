@@ -1,22 +1,62 @@
-const session = require('express-session');
-const connectRedis = require('connect-redis');
-const RedisStore = connectRedis(session);
-const sess = {
-    resave: false,
-    saveUninitialized: false,
-    secret: "test-session",
-    name: 'test',
-    cookie: {
-        httpOnly: true,
-        secure: false,
-    },
-    store: new RedisStore({ url: '127.0.0.1:6379', logErrors: true }),
-    /* . store는 세션을 어디에 저장할지를 고르는 옵션
-     기본값은 메모리 스토어로, 서버의 메모리에 저장
-    서버가 꺼지면 세션 데이터들이 다 날아가는 것
-     RedisStore로 바꾸면 이제 세션 데이터를 레디스에 저장
-     즉 서버가 꺼져도 데이터가 유지된다.
-     logErrors는 레디스 에러를 로깅*/
+const fetch = require('node-fetch');
+const redis = require('redis')
 
-};
-app.use(session(sess));
+const PORT = process.env.PORT || 5000;
+const REDIS_PORT = process.env.PORT || 6379;
+
+const client = redis.createClient(REDIS_PORT);
+
+const app = express();
+
+app.listen(5000, () => {
+    console.log(`App listening on port ${PORT}`)
+});
+
+// Make request to GitHub for data
+function setResponse(username , repos){
+    return `<h2> ${username} has ${repos} <h2> `
+}
+
+function cache(req , res , next){
+    const {username } = req.params;
+
+    client.get(username , (err,data) => {
+        if(err) throw err;
+
+        if(data !== null){
+            res.send(setResponse(username , data));
+        }else{
+            next();
+        }
+    })
+}
+
+
+
+
+async function getRepos(req, res, next) {
+
+    try {
+        console.log(`fetching Data ....`)
+
+        const {username} = req.params;
+
+
+        const response = await fetch(`https://api.github.com/users/${username}`);
+        const data = await response.json();
+
+        const repos = JSON.stringify(data);
+
+        console.log(repos)
+
+// Set to Redis
+        client.set(username , repos);
+
+        res.send(setResponse(username, repos));
+    } catch (err) {
+        console.error(err);
+        res.status(500);
+    }
+}
+
+app.get('/repos/:username',cache, getRepos);

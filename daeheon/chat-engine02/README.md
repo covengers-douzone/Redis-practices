@@ -1,15 +1,15 @@
 # Basic Redis Chat App Demo (Node.js)
 
-Showcases how to impliment chat index in Node.js, Socket.IO and Redis. This example uses **pub/sub** feature combined with web-sockets for implementing the message communication between client and server.
+Showcases how to impliment chat app in Node.js, Socket.IO and Redis. This example uses **pub/sub** feature combined with web-sockets for implementing the message communication between client and server.
 
-<a href="https://github.com/redis-developer/basic-redis-chat-index-demo-nodejs/raw/main/docs/screenshot000.png"><img src="https://github.com/redis-developer/basic-redis-chat-index-demo-nodejs/raw/main/docs/screenshot000.png" width="49%"></a>
-<a href="https://github.com/redis-developer/basic-redis-chat-index-demo-nodejs/raw/main/docs/screenshot001.png"><img src="https://github.com/redis-developer/basic-redis-chat-index-demo-nodejs/raw/main/docs/screenshot001.png" width="49%"></a>
+<a href="https://github.com/redis-developer/basic-redis-chat-app-demo-nodejs/raw/main/docs/screenshot000.png"><img src="https://github.com/redis-developer/basic-redis-chat-app-demo-nodejs/raw/main/docs/screenshot000.png" width="49%"></a>
+<a href="https://github.com/redis-developer/basic-redis-chat-app-demo-nodejs/raw/main/docs/screenshot001.png"><img src="https://github.com/redis-developer/basic-redis-chat-app-demo-nodejs/raw/main/docs/screenshot001.png" width="49%"></a>
 
 # Overview video
 
 Here's a short video that explains the project and how it uses Redis:
 
-[![Watch the video on YouTube](https://github.com/redis-developer/basic-redis-chat-index-demo-nodejs/raw/main/README.md)](https://www.youtube.com/watch?v=miK7xDkDXF0)
+[![Watch the video on YouTube](https://github.com/redis-developer/basic-redis-chat-app-demo-nodejs/raw/main/README.md)](https://www.youtube.com/watch?v=miK7xDkDXF0)
 
 ## Technical Stacks
 
@@ -39,7 +39,7 @@ Then we add messages to this room by writing to a sorted set:
 
 **_E.g._** `ZADD room:1:2 1615480369 "{'from': 1, 'date': 1615480369, 'message': 'Hello', 'roomId': '1:2'}"`.
 
-We use a stringified _JSON_ for keeping the message structure and simplify the implementation details for this demo-index.
+We use a stringified _JSON_ for keeping the message structure and simplify the implementation details for this demo-app.
 
 **Populate the "General" room with messages.** Messages are added to the sorted set with id of the "General" room: `room:0`
 
@@ -168,7 +168,7 @@ Pub/sub allows connecting multiple servers written in different platforms withou
 
 #### How the data is stored:
 
-- Messages are stored at `room:{roomId}` key in a sorted set (as mentioned above). They are added with `ZADD room:{roomId} {timestamp} {message}` command. Message is serialized to an index-specific JSON string.
+- Messages are stored at `room:{roomId}` key in a sorted set (as mentioned above). They are added with `ZADD room:{roomId} {timestamp} {message}` command. Message is serialized to an app-specific JSON string.
   - E.g `ZADD room:0 1617197047 { "From": "2", "Date": 1617197047, "Message": "Hello", "RoomId": "1:2" }`
 
 #### How the data is accessed:
