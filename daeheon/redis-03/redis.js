@@ -17,9 +17,50 @@ module.exports = class {
         this.client.get(key, callback);
     }
 
+   //해당 key에 해당하는 데이터 삭제
+    del(key, callback) {
+        this.client.del(key, callback);
+    }
     //connection close 추가
     quit(callback) {
         this.client.quit(callback);
+    }
+
+    //해당 key에 values 삽입
+    zadd(key, values, callback) {
+        this.client.zadd(key, values, callback);
+    }
+    //해당 key에 해당하는 데이터 중 score가 range에 해당하는 데이터 오름차순으로 조회
+    zrangebyscore(key, range, callback) {
+        this.client.zrangebyscore(key, range, callback);
+    }
+    //해당 key에 해당하는 데이터 중 score가 range에 해당하는 데이터를 내림차순으로 조회
+    zrevrangebyscore(key, range, callback) {
+        this.client.zrevrangebyscore(key, range, callback);
+    }
+    //해당 key에 해당하는 데이터 중 score가 range에 해당하는 데이터를 삭제
+    zremrangebyscore(key, range, callback) {
+        this.client.zremrangebyscore(key, range, callback);
+    }
+
+    //해당 key에 field와 value를 hash로 저장
+    hset(key, field, value, callback) {
+        this.client.hset(key, field, value, callback);
+    }
+
+    //key, field에 해당하는 데이터를 조회
+    hget(key, field, callback) {
+        this.client.hget(key, field, callback);
+    }
+
+    //해당 key에 해당하는 hash 데이터 모두 조회
+    hgetall(key, callback) {
+        this.client.hgetall(key, callback);
+    }
+
+    //key, field에 해당하는 데이터 삭제
+    hdel(key, field, callback) {
+        this.client.hdel(key, field, callback);
     }
 
     _setRedis() {

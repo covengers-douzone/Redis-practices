@@ -1,4 +1,9 @@
-> Redis 실전 Pub  , Sub  통신 
+>  종합 (연결, 컬렉션 Pub,Sub 통신  )
+
+``` bash
+npm i mocha  < 테스트 도구 >
+npm i redis
+ ```
 
 
 > ### auth 설정
@@ -11,10 +16,14 @@ redis 127.0.0.1:6379> AUTH "root"
  OK
 
 ```
-``` bash
-npm i mocha  < 테스트 도구 >
-npm i redis
- ```
+
+
+
+
+
+
+
+
 
 - ready : redis server와 연결이 확정되고 client가 준비 상태가 되었을 때 이벤트가 발생한다. redis의 명령어들은 ready event가 발생하기 전에 실행되어야 함            
 
