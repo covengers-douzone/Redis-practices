@@ -1,4 +1,4 @@
-# Chat-app (using gRPC,Redis)
+# gRPC practice
 
 * Server & Client
   * typescript
