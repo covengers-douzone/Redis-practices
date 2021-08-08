@@ -1,45 +1,37 @@
-> Node.js에서 Redis를 어떻게 활용 할까?
-
-- 먼저 Node.js 서버를 열고 , redis client를 생성해준다
+> Redis 실전 Pub  , Sub  통신 
 
 
-```javascript
-const app = express();
+> ### auth 설정
+ ```bash
+redis-cli redis 127.0.0.1:6379> AUTH "비밀번호" 
+(error) ERR Client sent AUTH, but no password is set redis 
+127.0.0.1:6379> CONFIG SET requirepass "root" 
+OK 
+redis 127.0.0.1:6379> AUTH "root"
+ OK
 
-app.listen(5000, () => {
-    console.log(`App listening on port ${PORT}`)
-});
-
-const client = redis.createClient(REDIS_PORT);
 ```
-
-- /reops/아이디 를 입력 하면 해당 JSON 값이 ID 값의 redis로 저장이 되어진다.
-
-```javascript
-app.get('/repos/:username',cache, getRepos); 
-
-
-// 해당 json을 받아 와 key : username  values = 서버에 요청한 json 데이터를 받아 옴
-const response = await fetch(`https://api.github.com/users/${username}`);
-const data = await response.json();
-
-const repos = JSON.stringify(data);
-
-console.log(repos)
-
-// Set to Redis
-client.set(username , repos);
-
-res.send(setResponse(username, repos));
-```
-
-- 설치파일 
-
-```bash
+``` bash
+npm i mocha  < 테스트 도구 >
 npm i redis
-npm i node-fetch
-```
+ ```
 
+- ready : redis server와 연결이 확정되고 client가 준비 상태가 되었을 때 이벤트가 발생한다. redis의 명령어들은 ready event가 발생하기 전에 실행되어야 함            
+
+
+- connect : redis server와 connection을 맺었을 때 이벤트가 발생한다
+
+
+- reconnecting : redis server와 연결이 끊긴 후에 다시 connection을 맺었을 때 이벤트가 발생한다
+
+
+- error : redis server와의 연결에서 오류가 발생했을 때 이벤트가 발생한다.
+
+
+- end : redis server와의 connection이 close 되었을 때 이벤트가 발생한다
+
+
+- warning : deprecate 된 option 이나 function을 사용했을 때 이벤트가 발생한다
 
 
 

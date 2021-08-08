@@ -1,0 +1,19 @@
+{
+  "name": "redis-03",
+  "version": "1.0.0",
+  "description": "> Node.js에서 Redis를 어떻게 활용 할까?",
+  "main": "redis-conf.js",
+  "scripts": {
+    "test": "mocha redis-test.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "chai": "4.3.4",
+    "redis": "3.1.2"
+  },
+  "devDependencies": {
+    "mocha": "9.0.3"
+  }
+}
