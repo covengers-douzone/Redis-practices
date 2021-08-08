@@ -63,6 +63,24 @@ module.exports = class {
         this.client.hdel(key, field, callback);
     }
 
+    //event listener 등록
+    on(event, callback) {
+        this.client.on(event, callback);
+    }
+    //채널에 메세지 전송
+    publish(channel, message) {
+        this.client.publish(channel, message);
+    }
+    //채널 구독
+    subscribe(channel) {
+        this.client.subscribe(channel);
+    }
+    //채널 구독 취소
+    unsubscribe(channel) {
+        this.client.unsubscribe(channel);
+    }
+
+
     _setRedis() {
         this._setRedisClient();
 
@@ -86,10 +104,6 @@ module.exports = class {
     _connectHandler() {
         console.log("#######Redis connection!");
     }
-
-
-
-
 
 
     _setRedisClient() {
