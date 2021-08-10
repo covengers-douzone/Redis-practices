@@ -7,6 +7,8 @@ const io = require('socket.io')(http);
 
 const myReids = new Redis();
 
+myReids.set("")
+
 
 app.get('/',(req,res) => {  //2
 
@@ -14,22 +16,18 @@ app.get('/',(req,res) => {  //2
     res.sendFile(__dirname + '/client.html');
 });
 
+//frontend
+socket.emit("send message", {
+    name: this.state.name,
+    msg: this.state.msg,
+});
 
-io.on('connection', (socket) => { //3
-    console.log('user connected: ', socket.id);
-    io.to(socket.id).emit('change name',name);
 
-
-
-    socket.on('disconnect', () => { //3-2
-        console.log('user disconnected: ', socket.id);
-    });
-
-    socket.on('send message', (name,text) => { //3-3
-        const msg = name + ' : ' + text;
-        console.log(msg);
-        io.emit('receive message', msg);
-    });
+//backend
+io.on("send message", (item) => {
+    const message = item.name + " : " + item.msg;
+    console.log(message);
+    io.emit("receive message", { name: item.name, msg: item.msg });
 });
 
 http.listen(3000, function(){ //4

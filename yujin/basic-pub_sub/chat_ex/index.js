@@ -11,7 +11,7 @@ index.use(express.json());
 
 //Serve up our static resources
 index.get('/', function (req, res) {
-    fs.readFile('./public/index.html', function (err, data) {
+    fs.readFile('./public/index.js', function (err, data) {
         res.end(data);
     });
 });
