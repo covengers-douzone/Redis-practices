@@ -5,7 +5,7 @@ import {ProtoGrpcType} from './proto/random';
 import * as readline from 'readline';
 
 const PORT = 8082;
-const PROTO_FILE = './proto/random.proto';
+const PROTO_FILE = './proto/chat.proto';
 
 const packageDef = protoLoader.loadSync(path.resolve(__dirname,PROTO_FILE));
 const grpcObj = (grpc.loadPackageDefinition(packageDef) as unknown) as ProtoGrpcType;

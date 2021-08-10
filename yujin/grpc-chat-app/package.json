@@ -1,0 +1,23 @@
+{
+  "dependencies": {
+    "google-protobuf": "^3.17.3",
+    "grpc-web": "^1.2.1",
+    "yarn": "^1.22.11"
+  },
+  "name": "chat-app",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "proto-gen": "./proto-gen.sh",
+    "proto-client": "./proto-client.sh",
+    "start": "ts-node server.ts",
+    "client": "ts-node client.ts"
+  },
+  "devDependencies": {
+    "@grpc/grpc-js": "^1.3.6",
+    "@grpc/proto-loader": "^0.6.4",
+    "ts-node": "^10.1.0",
+    "typescript": "^4.3.5"
+  }
+}

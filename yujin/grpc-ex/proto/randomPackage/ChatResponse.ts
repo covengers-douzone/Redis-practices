@@ -1,4 +1,4 @@
-// Original file: proto/random.proto
+// Original file: proto/chat.proto
 
 
 export interface ChatResponse {
