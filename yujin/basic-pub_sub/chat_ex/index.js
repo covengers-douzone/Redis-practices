@@ -40,6 +40,7 @@ var subscriber = redis.createClient(credentials.port, credentials.host);
 subscriber.on("error", function (err) {
     console.error('There was an error with the subscriber redis client ' + err);
 });
+
 var publisher = redis.createClient(credentials.port, credentials.host);
 publisher.on("error", function (err) {
     console.error('There was an error with the publisher redis client ' + err);
