@@ -1,16 +1,37 @@
-$(function(){
 
-    const redis = require('redis');
+(function (exports) {
+
+
+    function loadScript(url, callback)
+    {
+        // Adding the script tag to the head as suggested before
+        const head = document.head;
+        const script = document.createElement('script');
+        script.type = 'text/javascript';
+        script.src = url;
+        script.onreadystatechange = callback;
+        script.onload = callback;
+
+        // Fire the loading
+        head.appendChild(script);
+    }
+
+    const redis = loadScript("../../redis.js");
+    const CallBackCode = function() {
+        
+    };
+
+
+
 
 
     const chatForm = document.getElementById('chat-form');
     const chatMessage = document.querySelector('.chat-messages');
     const roomName = document.getElementById('room-name');
     const userList = document.getElementById('users');
-
 // Get username and room from URL
     const {username, room} = Qs.parse(location.search, {
-        ignoreQueryPrefix:true
+        ignoreQueryPrefix: true
     });
 
     const socket = io();
@@ -19,9 +40,8 @@ $(function(){
     socket.emit("joinRoom", {username, room});
 
 
-
 // Get room and users
-    socket.on('roomUsers',({room, users}) => {
+    socket.on('roomUsers', ({room, users}) => {
 
 
         outputRoomName(room);
@@ -33,7 +53,7 @@ $(function(){
         outputMessage(message);
 
         // Scroll down
-        chatMessage.scrollTop=chatMessage.scrollHeight;
+        chatMessage.scrollTop = chatMessage.scrollHeight;
     });
 
 // Message submit
@@ -54,6 +74,8 @@ $(function(){
 // Output message to DOM
 // message -> object so,  need to change from 'string' to 'object'
     function outputMessage(message) {
+
+
         const div = document.createElement('div');
         div.classList.add('message');
         div.innerHTML = `<p class="meta">${message.username} <span>${message.time}</span></p>
@@ -65,13 +87,13 @@ $(function(){
     };
 
 // ADD room name to DOM
-    function outputRoomName(room){
+    function outputRoomName(room) {
         roomName.innerText = room;
     }
 
 // ADD users name to DOM
-    function outputRoomUsers(users){
+    function outputRoomUsers(users) {
         // join() 메서드는 배열의 모든 요소를 연결해 하나의 문자열로 만듦.
-        userList.innerHTML = `${users.map(user => `<li>${user.username}</li>`).join('' ) } `;
+        userList.innerHTML = `${users.map(user => `<li>${user.username}</li>`).join('')} `;
     }
-});
+})(this)
