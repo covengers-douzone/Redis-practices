@@ -1,4 +1,4 @@
-// Original file: proto/random.proto
+// Original file: proto/chat.proto
 
 import type * as grpc from '@grpc/grpc-js'
 import type { MethodDefinition } from '@grpc/proto-loader'
