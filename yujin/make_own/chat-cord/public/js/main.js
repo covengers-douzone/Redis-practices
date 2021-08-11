@@ -37,7 +37,10 @@ chatForm.addEventListener('submit',(event)=>{
   const msg = event.target.elements.msg.value;
   //client.rpush('messages', `${from}:${message}`);
   // Emit message to server
-  socket.emit('chatMessage', msg);
+  socket.emit('chatMessage', {
+    msg: msg,
+    roomName: roomName.innerText
+  });
 
   // Clear input
   event.target.elements.msg.value='';
