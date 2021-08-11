@@ -1,0 +1,14 @@
+{
+    "keep": {
+        "days": false,
+        "amount": 30
+    },
+    "auditLog": "C:\\Users\\admin\\WebstormProjects\\Redis-practices\\daeheon\\redis-03\\backend\\logs\\error\\.fa9d1a7090365ee0c2e3e8e9c8cac5a04a19c1a2-audit.json",
+    "files": [
+        {
+            "date": 1628673787623,
+            "name": "C:\\Users\\admin\\WebstormProjects\\Redis-practices\\daeheon\\redis-03\\backend\\logs\\error\\2021-08-11.error.log",
+            "hash": "75734dd555fef2817d431dde62ba4ed1"
+        }
+    ]
+}

@@ -1,12 +1,10 @@
 (function(){
-    const express = require("express");
-
-
+    const express = require('express');
     const session = require('express-session');
-
+    const http = require('http');
     const path = require('path');
-
     const dotenv = require('dotenv');
+    const socketio = require('socket.io');
 
 
 
@@ -45,8 +43,9 @@
     // 7. Application Router Setup
     applicationRouter.setup(application);
 
+
     // 8. Server Startup
-    http.createServer(application)
+    const server = http.createServer(application)
         .on('listening', function(){
             logger.info('Listening on port ' + process.env.PORT );
         })
@@ -68,10 +67,14 @@
             }
         })
         .listen(process.env.PORT);
+        let io = socketio(server);
+        io.on('connection', socket => {
+            socket.on('joinRoom', ({username, room}) => {
 
+            });
 
+        })}
 
-})();
-
+)();
 
 

@@ -3,6 +3,9 @@ const express = require('express');
 const app = express();
 const http = require('http').Server(app);
 const io = require('socket.io')(http);
+const port = process.env.PORT || 4001;
+const index = require("./routes/index");
+
 
 
 const myReids = new Redis();
@@ -33,3 +36,5 @@ io.on("send message", (item) => {
 http.listen(3000, function(){ //4
     console.log('server on!');
 });
+
+

@@ -1,8 +1,18 @@
-const express = require("express");
-const router = express.Router();
+const errorRouter = require('./error');
+const authorized = require('./authorized');
 
-router.get("/", (req, res) => {
-res.send({ response: "I am alive" }).status(200);
-});
+const applicationRouter = {
+    setup: async function(application) {
+        application
+            .all('*', function (req, res, next) {
+                res.locals.req = req;
+                res.locals.res = res;
+                next();
+            })
+            .use('/api', require('./emaillist'))
+            .use(errorRouter.error404)
+            .use(errorRouter.error500)
+    }
+};
 
-module.exports = router
+module.exports = { applicationRouter };
