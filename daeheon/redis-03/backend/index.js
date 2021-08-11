@@ -1,41 +1,77 @@
+(function(){
+    const express = require("express");
 
-const express = require("express");
-const http = require("http");
-const socketIo = require("socket.io");
 
-const port = process.env.PORT || 4001;
-const index = require("./routes/index");
+    const session = require('express-session');
 
-const app = express();
-app.use(index);
+    const path = require('path');
 
-const server = http.createServer(app);
+    const dotenv = require('dotenv');
 
-const io = socketIo(server, {
-    cors: {
-        origin: "http://localhost:3000",
-        methods: ["GET", "POST"]
-    }
-});
 
-let interval;
 
-io.on("connection", (socket) => {
-    console.log("New client connected");
-    if (interval) {
-        clearInterval(interval);
-    }
-    interval = setInterval(() => getApiAndEmit(socket), 1000);
-    socket.on("disconnect", () => {
-        console.log("Client disconnected");
-        clearInterval(interval);
-    });
-});
+    // 1. Startup Arguments
+    const argv = require('minimist')(process.argv.slice(2));
 
-const getApiAndEmit = socket => {
-    const response = new Date();
-    // Emitting a new message. Will be consumed by the client
-    socket.emit("FromAPI", response);
-};
+    // 2. Environment Variables
+    dotenv.config({path: path.join(__dirname, 'app.config.env')})
 
-server.listen(port, () => console.log(`Listening on port ${port}`));
+    // 3. Process Title(Name)
+    process.title = argv.name;
+
+    // 4. Application Routers
+    const { applicationRouter } = require('./routes');
+
+    // 5. Logger
+    const logger = require('./logging');
+
+    // 6. Application Setup
+    const application = express()
+        // 6-1. Session Environment
+        .use(session({
+            secret: process.env.SESSION_SECRET,
+            resave: false,
+            saveUninitialized: false
+        }))
+        // 6-2. Body Parsers
+        .use(express.json())
+        .use(express.urlencoded({extended: true}))
+        // 6-3. Static
+        .use(express.static(path.join(__dirname, process.env.STATIC_RESOURCES_DIRECTORY)))
+        // 6-4. View Engine Setup
+        .set('views', path.join(__dirname, 'views'))
+        .set('view engine', 'ejs');
+
+    // 7. Application Router Setup
+    applicationRouter.setup(application);
+
+    // 8. Server Startup
+    http.createServer(application)
+        .on('listening', function(){
+            logger.info('Listening on port ' + process.env.PORT );
+        })
+        .on('error', function(error) {
+            if(error.syscall !== 'listen') {
+                throw error;
+            }
+            switch(error.code) {
+                case 'EACCES':
+                    logger.error('Port ' + process.env.PORT  + ' requires elevated privileges');
+                    process.exit(1);
+                    break;
+                case 'EADDRINUSE':
+                    logger.error('Port ' + process.env.PORT  + ' is already in use');
+                    process.exit(1);
+                    break;
+                default:
+                    throw error;
+            }
+        })
+        .listen(process.env.PORT);
+
+
+
+})();
+
+
+
