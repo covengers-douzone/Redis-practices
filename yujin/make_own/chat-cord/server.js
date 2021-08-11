@@ -4,32 +4,51 @@ const express = require('express');
 const socketio = require('socket.io');
 const formatMessage = require('./utils/message.js');
 const {userJoin, getCurrentUser, userLeave, getRoomUsers} = require('./utils/users.js');
+
+// application
+const app = express();
+const server = http.createServer(app);
+app
+    // set static folder
+    .use(express.static(path.join(__dirname, 'public')))
+  //  .use('/api',require('./routes/chat'))
+    ;
+
+const PORT = 3000 || process.env.PORT;
+server.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+
+// redis
 const redis = require('redis');
 
-const app = express();
-const client = redis.createClient();
-const server = http.createServer(app);
-const io = socketio(server);
+// pub sub client
+const client = redis.createClient({ host: "localhost", port: 6379 });
+// client.auth("redis","root" ,(err) =>{
+//     console.error(err);
+// });
+const pubClient = client.duplicate();
+const subClient = pubClient.duplicate();
 
-// set static folder
-app.use(express.static(path.join(__dirname, 'public')));
+// variances
+const botName = 'Bot';
 
-const botName = 'ChatCord Bot';
-
-function beforeMessage(socket){
+function beforeMessage(socket,room){
     // redis-cli) lrange messages 0 -1
     client.lrange('messages','0','-1',(err,data) => {
         data.map(x => {
-            const [redisUsername, redisMessage] = x.split(':');
-
-            socket.emit('message', {
-                username: redisUsername,
-                text: redisMessage
-            })
+            const [redisRoomName, redisUsername, redisMessage, redisHour, redisMin] = x.split(':');
+            if(room === redisRoomName){
+                socket.emit('message', {
+                    username: redisUsername,
+                    text: redisMessage,
+                    time: `${redisHour}:${redisMin}`
+                })
+            }
         });
     });
 }
 
+// io
+const io = socketio(server);
 // Run when client connects
 io.on('connection', socket => {
     socket.on('joinRoom',({username,room})=>{
@@ -37,7 +56,7 @@ io.on('connection', socket => {
         socket.join(user.room); // room 입장
 
         // init
-        beforeMessage(socket);   // redis에 저장된 메세지들 모두 보여줌
+        beforeMessage(socket,room);   // redis에 저장된 메세지들 모두 보여줌
         // welcome message
         socket.emit('message',formatMessage(botName, '방에 입장하셨습니다.')); // 막 입장한 사람에게 보내는 메세지
         socket.broadcast.to(user.room).emit('message',formatMessage(botName,  `${user.username}님이 채팅방에 입장하였습니다.`)); // 모두에게 들어온 사람을 환영하는 메세지
@@ -64,16 +83,12 @@ io.on('connection', socket => {
     });
 
     // Listen for chatMessage
-    socket.on('chatMessage',(msg)=>{
+    socket.on('chatMessage',({msg,roomName})=>{
         const user = getCurrentUser(socket.id);
-        console.log(user,msg);
-        //client.rpush('messages', `${from}:${message}`);
-        io.to(user.room).emit('message',formatMessage(user.username, msg));
+        const message = formatMessage(user.username, msg);
+        // redis 저장
+        client.rpush('messages', `${roomName}:${message.username}:${message.text}:${message.time}`);
+        // emit message
+        io.to(user.room).emit('message',message);
     })
 });
-
-const PORT = 3000 || process.env.PORT;
-server.listen(PORT, () => console.log(`Server running on port ${PORT}`));
-
-
-
