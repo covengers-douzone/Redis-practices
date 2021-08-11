@@ -3,8 +3,13 @@ const redis = require('redis');
 
 
 module.exports = class {
-    constructor() {
+
+
+    userName;
+
+    constructor(userName) {
         this._setRedis();
+        this.userName = userName;
     }
 
     //set 명령 실행 추가
