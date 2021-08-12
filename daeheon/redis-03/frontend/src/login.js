@@ -1,7 +1,8 @@
-import React, {Component, useEffect, useState} from 'react';
-import ReactDom from 'react-dom';
+import React, {Component, useEffect, useState , Fragment} from 'react';
 import Modal from 'react-modal';
-import room from './room'
+import redis from '../../redis'
+
+
 
 const customStyles = {
     content: {
@@ -16,24 +17,29 @@ const customStyles = {
     },
 };
 export default class App extends Component {
-
-
     subtitle;
 
     openModal() {
         this.setState({
             isOpen: true,
         })
-    }
 
+        const info = {
+            name : this.state.name,
+            room : this.state.room,
+            message : this.state.message,
+        }
+
+        this.state.sub.subscribe(`${this.state.room}` );
+
+
+    }
     afteropenModal() {
-        alert('현재 이름 ' + this.state.name);
-
+     //    alert('현재 이름 ' + this.state.name);
     }
-
     closeModal() {
         this.setState({
-            isOpen: true,
+            isOpen: false,
         })
     }
 
@@ -42,6 +48,9 @@ export default class App extends Component {
         this.state = {
             name: '',
             isOpen: false,
+            message : "",
+            room : -1 ,
+            sub : new redis()
         };
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
@@ -52,32 +61,71 @@ export default class App extends Component {
     }
 
     handleSubmit(event) {
-        this.openModal();
+
         //    alert('A name was submitted: ' + this.state.name);
         event.preventDefault();
 
     }
+    async send(user, room, message) {
+        try {
+            console.log('notify task add', user, room);
+            const url = `/api/message/${user}/${room}/${message}`;
+            const task = {
+                message: message,
+                name: user,
+            }
+            const response = await fetch(url, {
+                method: 'post',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(task)
+            });
 
+            if (!response.ok) {
+                throw new Error(`${response.status} ${response.statusText}`);
+            }
+
+            const json = await response.json();
+            if (json.result !== 'success') {
+                throw new Error(`${json.result} ${json.message}`);
+            }
+
+            await this.state.sub.on(`${this.state.room}` ,(channel,mesage) => {
+
+                console.log(mesage);
+
+            })
+
+            console.log(json);
+
+        } catch (err) {
+            console.error(err);
+        }
+    };
     render() {
         return (
-            <form onSubmit={this.handleSubmit}>
+            <Fragment>
+
                 <label>
                     Name:
-                    <input type="text" value={this.state.name} onChange={this.handleChange}/>
+                    <input type="text" value = {this.state.name} onChange={this.handleChange} />
                 </label>
-                <input type="submit" value="Submit"/>
+                <input type="submit" value="Submit" onClick={
+                    (e) => {
+                        this.openModal();
+
+                    }
+                }/>
                 <Modal
+                    shouldCloseOnOverlayClick={ false }
                     isOpen={this.state.isOpen}
-                    onAfterOpen={this.afterOpenModal}
+                    onAfterOpen={this.afteropenModal.bind(this)}
                     onRequestClose={this.closeModal}
                     style={customStyles}
                     contentLabel="Example Modal"
                 >
                     <h2 ref={(_subtitle) => (this.subtitle = _subtitle)}>Hello</h2>
-                    <button onClick={this.closeModal}>모달 종료</button>
-                    <button onClick={this.closeModal}>채팅 종료</button>
-
-
+                    <button onClick={this.closeModal.bind(this)}>모달 종료</button>
+                    <button onClick={this.closeModal.bind(this)}>채팅 종료</button>
                     <div style={{
                         display : 'inline',
                         width: '100%',
@@ -101,8 +149,12 @@ export default class App extends Component {
                             }} disabled >
                             채팅 내역
                     </textarea>
-                            <div><input/>
-                                <button>메세지 보내기</button>
+                            <div><input name = "message" value = {this.state.message} onChange={(e)=> {
+                                this.setState({
+                                    message : e.target.value,
+                                })
+                            }} />
+                                <button onClick={() => this.send(this.state.name,this.state.room,this.state.message) }>메세지 보내기</button>
                             </div>
                         </div>
                         <div style={{
@@ -119,8 +171,8 @@ export default class App extends Component {
 
                 </Modal>
 
-            </form>
 
+            </Fragment>
         );
     }
 }

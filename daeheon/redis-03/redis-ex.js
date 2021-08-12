@@ -17,7 +17,7 @@ Pub01.publish("room1", "안녕하세요!")  // 메시지 때릴떄
 Pub01.publish("room1", "안녕하세요!")
 Pub01.publish("room1", "안녕하세요!")
 
-s
+
 
 Lee.on("message" , (channel, messages) => {
     // 요기서 get ,set ,del 처리

@@ -3,7 +3,8 @@ const controller = require('../controllers/chat');
 
 const router = express.Router();
 router.route('').get(controller.readAll);
-router.route('/joinRoom').get(controller.readAll);
-router.route('/exitRoom').get(controller.readAll);
-router.route('/message').get(controller.readAll);
+router.route('/joinRoom').get(controller.join);
+router.route('/exitRoom').get(controller.exit);
+router.route('/message/:user/:room/:message').post(controller.send);
+router.route('/create').get(controller.create);
 module.exports = router;

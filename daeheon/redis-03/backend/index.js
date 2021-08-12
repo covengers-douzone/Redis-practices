@@ -6,8 +6,6 @@
     const dotenv = require('dotenv');
     const socketio = require('socket.io');
 
-
-
     // 1. Startup Arguments
     const argv = require('minimist')(process.argv.slice(2));
 
