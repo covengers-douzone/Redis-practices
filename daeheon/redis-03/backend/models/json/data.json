@@ -1,0 +1,26 @@
+[
+  {
+    "no": 1,
+    "name" : "박대헌",
+    "siteRole" : "admin",
+    "roomRole" :  "admin"
+  },
+  {
+    "no": 2,
+    "name" : "손재현",
+    "siteRole" : "user",
+    "roomRole" :  "user"
+  },{
+  "no": 3,
+  "name" : "강우성",
+  "siteRole" : "user",
+  "roomRole" :  "user"
+},
+  {
+    "no": 4,
+    "name" : "이유진",
+    "siteRole" : "user",
+    "roomRole" :  "user"
+  }
+
+]
