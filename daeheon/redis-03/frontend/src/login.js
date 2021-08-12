@@ -1,9 +1,7 @@
 import React, {Component, useEffect, useState , Fragment} from 'react';
 import Modal from 'react-modal';
-import redis from '../../redis'
-
-
-
+import redis from 'redis'
+const conf = require('../../redis-conf');
 const customStyles = {
     content: {
         width: '70%',
@@ -30,7 +28,7 @@ export default class App extends Component {
             message : this.state.message,
         }
 
-        this.state.sub.subscribe(`${this.state.room}` );
+      this.state.sub.client.subscribe(`${this.state.room}` );
 
 
     }
@@ -50,7 +48,7 @@ export default class App extends Component {
             isOpen: false,
             message : "",
             room : -1 ,
-            sub : new redis()
+            sub : redis.createClient(`redis://${conf.user}:${conf.password}@${conf.host}:${conf.port}`),
         };
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
@@ -89,7 +87,7 @@ export default class App extends Component {
                 throw new Error(`${json.result} ${json.message}`);
             }
 
-            await this.state.sub.on(`${this.state.room}` ,(channel,mesage) => {
+            await this.state.sub.client.on(`${this.state.room}` ,(channel,mesage) => {
 
                 console.log(mesage);
 
