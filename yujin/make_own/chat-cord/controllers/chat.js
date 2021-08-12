@@ -1,14 +1,28 @@
 const { response } = require('express');
+const moment = require('moment');
+
+// redis
+const redis = require("redis");
+const client = redis.createClient({ host: "localhost", port: 6379 });
+const pubClient = client.duplicate();
 
 module.exports = {
-    readAllCards: async function(req, res, next) {
+    sendMessage: function(req, res, next) {
         try {
-            //const results = await model.findAllCards();
+            const {roomName, sender, message} = req.query;
+            const messageInfo = {
+                sender: sender,
+                roomName: roomName,
+                message: message,
+                time: moment().format('h:mm a')
+            }
+            client.rpush('messages', `${roomName}:${sender}:${message}:${moment().format('h:mm a')}`);
+            pubClient.publish(`${roomName}`, `${roomName}:${sender}:${message}:${moment().format('h:mm a')}`)
             res
                 .status(200)
                 .send({
                     result: 'success',
-                    data: results,
+                    data: messageInfo,
                     message: null
                 });
         } catch(err){

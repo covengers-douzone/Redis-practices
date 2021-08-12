@@ -1,0 +1,19 @@
+{
+    "keep": {
+        "days": false,
+        "amount": 30
+    },
+    "auditLog": "C:\\Users\\BIT\\WebstormProjects\\Redis-practices\\daeheon\\redis-03\\backend\\logs\\.0f25cf7f3458d6d8bc3b398c381ae77b65a42003-audit.json",
+    "files": [
+        {
+            "date": 1628497441238,
+            "name": "C:\\Users\\BIT\\WebstormProjects\\Redis-practices\\daeheon\\redis-03\\backend\\logs\\2021-08-09.log",
+            "hash": "1c4cfbcbc5ebf6430643f367cef5c899"
+        },
+        {
+            "date": 1628652957728,
+            "name": "C:\\Users\\BIT\\WebstormProjects\\Redis-practices\\daeheon\\redis-03\\backend\\logs\\2021-08-11.log",
+            "hash": "5df865e5a5827558ac7daf1a75c77f78"
+        }
+    ]
+}

@@ -9,10 +9,17 @@ const {userJoin, getCurrentUser, userLeave, getRoomUsers} = require('./utils/use
 const app = express();
 const server = http.createServer(app);
 app
+    .use(express.urlencoded({extended:true})) // application/x-www-form-urlencoded
+    .use(express.json()) // application/json
     // set static folder
     .use(express.static(path.join(__dirname, 'public')))
-  //  .use('/api',require('./routes/chat'))
-    ;
+    .all('*',function(req,res,next){
+                res.locals.req = req;
+                res.locals.res = res;
+                next();
+            })
+    .use('/api',require('./routes/chat'))
+;
 
 const PORT = 3000 || process.env.PORT;
 server.listen(PORT, () => console.log(`Server running on port ${PORT}`));
@@ -25,8 +32,7 @@ const client = redis.createClient({ host: "localhost", port: 6379 });
 // client.auth("redis","root" ,(err) =>{
 //     console.error(err);
 // });
-const pubClient = client.duplicate();
-const subClient = pubClient.duplicate();
+const subClient = client.duplicate();
 
 // variances
 const botName = 'Bot';
@@ -54,7 +60,13 @@ io.on('connection', socket => {
     socket.on('joinRoom',({username,room})=>{
         const user = userJoin(socket.id,username,room);
         socket.join(user.room); // room 입장
+        subClient.subscribe(room);
 
+        subClient.on('subscribe', (room, count)=>{
+            console.log(room, count); // channel, count
+        })
+
+        //socket.emit('subClient',subClient);
         // init
         beforeMessage(socket,room);   // redis에 저장된 메세지들 모두 보여줌
         // welcome message
@@ -82,13 +94,16 @@ io.on('connection', socket => {
         }
     });
 
-    // Listen for chatMessage
-    socket.on('chatMessage',({msg,roomName})=>{
-        const user = getCurrentUser(socket.id);
-        const message = formatMessage(user.username, msg);
-        // redis 저장
-        client.rpush('messages', `${roomName}:${message.username}:${message.text}:${message.time}`);
-        // emit message
-        io.to(user.room).emit('message',message);
+    // sub
+    subClient.on('message', (roomName, message) => {
+        // message : JavaScript:배유진:안녕~:3:05 pm
+        const [redisRoomName, redisUsername, redisMessage, redisHour, redisMin] = message.split(':');
+        if(redisRoomName === roomName){
+            socket.emit('message', {
+                username: redisUsername,
+                text: redisMessage,
+                time: `${redisHour}:${redisMin}`
+            })
+        }
     })
 });
