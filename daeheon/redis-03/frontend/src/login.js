@@ -1,6 +1,7 @@
-import React, {Component, useEffect, useState , Fragment} from 'react';
+import React, {Component, useEffect, useState, Fragment} from 'react';
 import Modal from 'react-modal';
-import redis from 'redis'
+import io from "socket.io-client";
+
 const conf = require('../../redis-conf');
 const customStyles = {
     content: {
@@ -14,27 +15,44 @@ const customStyles = {
         transform: 'translate(-50%, -50%)',
     },
 };
+
 export default class App extends Component {
     subtitle;
 
-    openModal() {
+
+
+
+    async openModal() {
         this.setState({
             isOpen: true,
         })
 
         const info = {
-            name : this.state.name,
-            room : this.state.room,
-            message : this.state.message,
+            name: this.state.name,
+            room: this.state.room,
+            message: this.state.message,
         }
-
-      this.state.sub.client.subscribe(`${this.state.room}` );
+        await this.state.socket.emit("join", {
+            name: this.state.name,
+            room: this.state.room,
+            message : `${this.state.name} 님이 ${this.state.room} 방에 입장 하셨습니다.}`,
+        });
+        this.setState({
+            openChat : `${this.state.name},${this.state.room},${this.state.message}`
+        })
+        await this.state.socket.on("messageUpdate" , (message) => {
+            this.setState({
+                message :  message,
+            })
+        })
 
 
     }
+
     afteropenModal() {
-     //    alert('현재 이름 ' + this.state.name);
+        //    alert('현재 이름 ' + this.state.name);
     }
+
     closeModal() {
         this.setState({
             isOpen: false,
@@ -46,10 +64,13 @@ export default class App extends Component {
         this.state = {
             name: '',
             isOpen: false,
-            message : "",
-            room : -1 ,
-            sub : redis.createClient(`redis://${conf.user}:${conf.password}@${conf.host}:${conf.port}`),
+            message: "",
+            room: -1,
+            socket: io.connect("http://localhost:8888",{ transports : ['websocket'] }),
+            openChat : [{}]
+
         };
+      //  console.log(this.state.socket)
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
     }
@@ -62,11 +83,20 @@ export default class App extends Component {
 
         //    alert('A name was submitted: ' + this.state.name);
         event.preventDefault();
+    }
+
+    textAreaAdd(name,room,message) {
+
+        console.log(this.state.openChat)
+        this.setState({
+            openChat : `${name},${room},${message}`
+        })
 
     }
+
     async send(user, room, message) {
         try {
-            console.log('notify task add', user, room);
+
             const url = `/api/message/${user}/${room}/${message}`;
             const task = {
                 message: message,
@@ -87,11 +117,23 @@ export default class App extends Component {
                 throw new Error(`${json.result} ${json.message}`);
             }
 
-            await this.state.sub.client.on(`${this.state.room}` ,(channel,mesage) => {
+            // 메세지를 보내준다!!
+            await this.state.socket.emit("getMessage", {
+                name: this.state.name,
+                message: this.state.message,
+                room: this.state.room
+            });
 
-                console.log(mesage);
-
+            // 메세지를 받는다
+            await this.state.socket.on("comment", (info) => {
+                this.setState({
+                    name : info.name ,
+                    room : info.room ,
+                    message : info.message,
+                })
+                this.textAreaAdd(info.name , info.room , info.message)
             })
+
 
             console.log(json);
 
@@ -99,13 +141,14 @@ export default class App extends Component {
             console.error(err);
         }
     };
+
     render() {
         return (
             <Fragment>
 
                 <label>
                     Name:
-                    <input type="text" value = {this.state.name} onChange={this.handleChange} />
+                    <input type="text" value={this.state.name} onChange={this.handleChange}/>
                 </label>
                 <input type="submit" value="Submit" onClick={
                     (e) => {
@@ -114,7 +157,7 @@ export default class App extends Component {
                     }
                 }/>
                 <Modal
-                    shouldCloseOnOverlayClick={ false }
+                    shouldCloseOnOverlayClick={false}
                     isOpen={this.state.isOpen}
                     onAfterOpen={this.afteropenModal.bind(this)}
                     onRequestClose={this.closeModal}
@@ -125,12 +168,12 @@ export default class App extends Component {
                     <button onClick={this.closeModal.bind(this)}>모달 종료</button>
                     <button onClick={this.closeModal.bind(this)}>채팅 종료</button>
                     <div style={{
-                        display : 'inline',
+                        display: 'inline',
                         width: '100%',
                         height: '100%',
                     }}>
                         <div style={{
-                            display : 'inline',
+                            display: 'inline',
                             width: '50%',
                             height: '100%',
                         }}>
@@ -144,25 +187,27 @@ export default class App extends Component {
                             <textarea style={{
                                 width: '50%',
                                 height: '100%',
-                            }} disabled >
+                            }} disabled value={this.state.openChat} onChange={this.textAreaAdd}>
                             채팅 내역
                     </textarea>
-                            <div><input name = "message" value = {this.state.message} onChange={(e)=> {
+                            <div><input name="message" value={this.state.message} onChange={(e) => {
                                 this.setState({
-                                    message : e.target.value,
+                                    message: e.target.value,
                                 })
-                            }} />
-                                <button onClick={() => this.send(this.state.name,this.state.room,this.state.message) }>메세지 보내기</button>
+                            }}/>
+                                <button
+                                    onClick={() => this.send(this.state.name, this.state.room, this.state.message)}>메세지
+                                    보내기
+                                </button>
                             </div>
                         </div>
                         <div style={{
-                            display : 'inline',
+                            display: 'inline',
                             width: '50%',
                             height: '100%',
                         }}>
-                           <button>방 1번</button>
+                            <button>방 1번</button>
                         </div>
-
 
 
                     </div>

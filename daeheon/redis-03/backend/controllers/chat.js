@@ -20,7 +20,7 @@ module.exports = {
     send: async function(req, res, next) {
 
         try {
-            console.log(req.params);
+            console.log("fetch" + req.params);
 
             const results = req.params;
             res
@@ -30,7 +30,8 @@ module.exports = {
                     data: results,
                     message: null
                 });
-            new redis().publish(`${req.params.room}` , `${req.params.user}:${req.params.room}:${req.params.message}`)
+      new redis().publish(`${req.params.room}` , `${req.params.user}:${req.params.room}:${req.params.message}`)
+
         } catch(err){
             next(err);
         }
