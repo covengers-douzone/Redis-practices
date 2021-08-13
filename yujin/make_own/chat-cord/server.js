@@ -108,8 +108,8 @@ io.on('connection', socket => {
 
             // unsubscribe && 객체 없애기
             const subClient = subClients.filter((subClient) => { return (subClient['socketid'] === socket.id)});
-            subClient['subClient'].unsubscribe();
-            
+            subClient[0]['subClient'].unsubscribe();
+            subClients.splice(subClients.indexOf(subClient[0]));
         }
     });
 });
