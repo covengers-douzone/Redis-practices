@@ -4,6 +4,10 @@ const express = require('express');
 const socketio = require('socket.io');
 const formatMessage = require('./utils/message.js');
 const {userJoin, getCurrentUser, userLeave, getRoomUsers} = require('./utils/users.js');
+const dotenv = require('dotenv');
+
+// Environment Variables(환경변수 관리)
+dotenv.config({path: path.join(__dirname,'config/db.env')});
 
 // application
 const app = express();
@@ -77,7 +81,6 @@ io.on('connection', socket => {
         })
         subClients.push(subClient);
 
-        socket.emit();
         socket.join(user.room); // room 입장
 
         // init
