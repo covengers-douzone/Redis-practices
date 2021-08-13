@@ -18,9 +18,7 @@ const customStyles = {
 
 export default class App extends Component {
     subtitle;
-
-
-
+    socket =  io.connect("http://localhost:8888", {transports: ['websocket']});
 
     async openModal() {
         this.setState({
@@ -32,19 +30,17 @@ export default class App extends Component {
             room: this.state.room,
             message: this.state.message,
         }
-        await this.state.socket.emit("join", {
+        await this.socket.emit("join", {
             name: this.state.name,
             room: this.state.room,
-            message : `${this.state.name} 님이 ${this.state.room} 방에 입장 하셨습니다.}`,
+            message: `${this.state.name} 님이 ${this.state.room} 방에 입장 하셨습니다.}`,
         });
-        this.setState({
-            openChat : `${this.state.name},${this.state.room},${this.state.message}`
-        })
-        await this.state.socket.on("messageUpdate" , (message) => {
-            this.setState({
-                message :  message,
-            })
-        })
+
+        // await this.state.socket.on("messageUpdate" , (message) => {
+        //     this.setState({
+        //         openchat :  `${message.name}:${message.room} `,
+        //     })
+        // })
 
 
     }
@@ -66,11 +62,11 @@ export default class App extends Component {
             isOpen: false,
             message: "",
             room: -1,
-            socket: io.connect("http://localhost:8888",{ transports : ['websocket'] }),
-            openChat : [{}]
+
+            openChat: ""
 
         };
-      //  console.log(this.state.socket)
+        //  console.log(this.state.socket)
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
     }
@@ -85,13 +81,18 @@ export default class App extends Component {
         event.preventDefault();
     }
 
-    textAreaAdd(name,room,message) {
+    textAreaAdd(name, room, message) {
 
-        console.log(this.state.openChat)
+        let backMessage = [`${name},${room},${message}
+        `]
+        console.log("textaArea: !!!!!!" + backMessage)
+
+
         this.setState({
-            openChat : `${name},${room},${message}`
+            openChat: backMessage
         })
 
+        console.log("this.state.openChat: !!!!!!!" + this.state.openChat)
     }
 
     async send(user, room, message) {
@@ -117,22 +118,21 @@ export default class App extends Component {
                 throw new Error(`${json.result} ${json.message}`);
             }
 
-            // 메세지를 보내준다!!
-            await this.state.socket.emit("getMessage", {
-                name: this.state.name,
-                message: this.state.message,
-                room: this.state.room
-            });
+            // await this.state.socket.emit("getMessage", {
+            //     name: this.state.name,
+            //     message: this.state.message,
+            //     room: this.state.room
+            // });
+
+
 
             // 메세지를 받는다
-            await this.state.socket.on("comment", (info) => {
-                this.setState({
-                    name : info.name ,
-                    room : info.room ,
-                    message : info.message,
-                })
-                this.textAreaAdd(info.name , info.room , info.message)
-            })
+            this.socket.on("comment", (info) => {
+                let count = 0;
+                count++;
+                console.log("count!!" + count);
+                this.textAreaAdd(info.name, info.room, info.message)
+            }) // 메세지를 보내준다!!
 
 
             console.log(json);
@@ -187,7 +187,7 @@ export default class App extends Component {
                             <textarea style={{
                                 width: '50%',
                                 height: '100%',
-                            }} disabled value={this.state.openChat} onChange={this.textAreaAdd}>
+                            }} disabled value={this.state.openChat}>
                             채팅 내역
                     </textarea>
                             <div><input name="message" value={this.state.message} onChange={(e) => {

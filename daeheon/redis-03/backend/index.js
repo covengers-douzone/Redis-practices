@@ -71,9 +71,9 @@
         const io = socketio(server);
         let subList = []
         let info = {}
-        io.on('connection', async socket => {
+        io.on('connection', socket => {
             console.log("connection:연결@@@@@@@@@")
-            io.on('join',  ({name, room, message}) => {
+            socket.on('join',  ({name, room, message}) => {
                 console.log("join:@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
                 info = {
                     name: name,
@@ -82,32 +82,32 @@
                 }
 
                 console.log("INFO 정보!! " + info.message)
-                 socket.emit("messageUpdate", (info))
+               //  socket.emit("messageUpdate", (info))
 
                 subList.push(new redis())
                 subList.slice(-1)[0].subscribe(`${room}`)
 
                 subList.slice(-1)[0].on("message",  (channel, message) => {
-                    console.log(`Sub:채널:${channel}메시지:${message}`)
-                    socket.emit("comment", ({name: info.name, room: channel, message: message}))
+                    console.log("sub" + message + ":" + channel)
+                    socket.emit("comment", ({name : info.name , room : info.room , message : message}))
 
                 })
 
             })
-            io.on('getMessage', ({name, room, message}) => {
-
-                info = {
-                    name: name,
-                    room: room,
-                    message: message,
-                }
-                console.log("현재 접속자 수: " +  subList.length)
-                socket.emit("comment", ({name : info.name , room : info.room , message : message}))
-
-                  let index = 0;
-
-
-        })
+        //     socket.on('getMessage', ({name, room, message}) => {
+        //
+        //         info = {
+        //             name: name,
+        //             room: room,
+        //             message: message,
+        //         }
+        //         console.log("현재 접속자 수: " +  subList.length)
+        //
+        //
+        //           let index = 0;
+        //
+        //
+        // })
     })}
 )();
 
