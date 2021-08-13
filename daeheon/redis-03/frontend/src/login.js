@@ -14,10 +14,14 @@ const customStyles = {
         transform: 'translate(-50%, -50%)',
     },
 };
-
+const socket =  io.connect("http://localhost:8888", {transports: ['websocket']});
 export default class App extends Component {
     subtitle;
-    socket =  io.connect("http://localhost:8888", {transports: ['websocket']});
+
+
+
+
+
 
     async openModal() {
         this.setState({
@@ -29,7 +33,7 @@ export default class App extends Component {
             room: this.state.room,
             message: this.state.message,
         }
-        await this.socket.emit("join", {
+        await socket.emit("join", {
             name: this.state.name,
             room: this.state.room,
             message: `${this.state.name} 님이 ${this.state.room} 방에 입장 하셨습니다.}`,
@@ -40,8 +44,6 @@ export default class App extends Component {
         //         openchat :  `${message.name}:${message.room} `,
         //     })
         // })
-
-
     }
 
     afteropenModal() {
@@ -52,6 +54,7 @@ export default class App extends Component {
         this.setState({
             isOpen: false,
         })
+        socket.close();
     }
 
     constructor(props) {
@@ -82,9 +85,10 @@ export default class App extends Component {
 
     textAreaAdd(name, room, message) {
 
-        let backMessage = [`${name},${room},${message}
-        `]
+        let backMessage = `${this.state.openChat}${name}:${room}:${message}
+`
         console.log("textaArea: !!!!!!" + backMessage)
+
 
 
         this.setState({
@@ -92,6 +96,15 @@ export default class App extends Component {
         })
 
         console.log("this.state.openChat: !!!!!!!" + this.state.openChat)
+    }
+
+    componentDidMount() {
+        // 메세지를 받는다
+        socket.on("comment", (info) => {
+
+            this.textAreaAdd(info.name, info.room, info.message)
+
+        }) // 메세지를 보내준다!!
     }
 
     async send(user, room, message) {
@@ -125,13 +138,6 @@ export default class App extends Component {
 
 
 
-            // 메세지를 받는다
-            this.socket.on("comment", (info) => {
-                let count = 0;
-                count++;
-                console.log("count!!" + count);
-                this.textAreaAdd(info.name, info.room, info.message)
-            }) // 메세지를 보내준다!!
 
 
             console.log(json);
