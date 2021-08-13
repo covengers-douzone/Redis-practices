@@ -1,7 +1,6 @@
 import React, {Component, useEffect, useState, Fragment} from 'react';
 import Modal from 'react-modal';
 import io from "socket.io-client";
-
 const conf = require('../../redis-conf');
 const customStyles = {
     content: {
