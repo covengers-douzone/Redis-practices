@@ -81,7 +81,7 @@ const initPubSub = () => {
       return;
     }
     io.emit(type, data);
-  });
+  })
   sub.subscribe("MESSAGES");
 };
 
