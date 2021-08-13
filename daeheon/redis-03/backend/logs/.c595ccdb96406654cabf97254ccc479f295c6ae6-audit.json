@@ -1,0 +1,14 @@
+{
+    "keep": {
+        "days": false,
+        "amount": 30
+    },
+    "auditLog": "E:\\project\\covengers\\Redis-practices\\daeheon\\redis-03\\backend\\logs\\.c595ccdb96406654cabf97254ccc479f295c6ae6-audit.json",
+    "files": [
+        {
+            "date": 1628753739630,
+            "name": "E:\\project\\covengers\\Redis-practices\\daeheon\\redis-03\\backend\\logs\\2021-08-12.log",
+            "hash": "9d1a266447120bd946fab02d125e1481"
+        }
+    ]
+}

@@ -1,8 +1,14 @@
 import React, {Component, useEffect, useState, Fragment} from 'react';
 import Modal from 'react-modal';
+<<<<<<< HEAD
 import io from "socket.io-client";
 
 const conf = require('../../redis-conf');
+=======
+import redis from '../../redis'
+
+
+>>>>>>> d3f9631a5e3a54a292cb7fa9cb10dfcb6084ca3a
 const customStyles = {
     content: {
         width: '70%',
@@ -36,11 +42,15 @@ export default class App extends Component {
             message: `${this.state.name} 님이 ${this.state.room} 방에 입장 하셨습니다.}`,
         });
 
+<<<<<<< HEAD
         // await this.state.socket.on("messageUpdate" , (message) => {
         //     this.setState({
         //         openchat :  `${message.name}:${message.room} `,
         //     })
         // })
+=======
+        this.state.sub.subscribe(`${this.state.room}` );
+>>>>>>> d3f9631a5e3a54a292cb7fa9cb10dfcb6084ca3a
 
 
     }
@@ -60,11 +70,17 @@ export default class App extends Component {
         this.state = {
             name: '',
             isOpen: false,
+<<<<<<< HEAD
             message: "",
             room: -1,
 
             openChat: ""
 
+=======
+            message : "",
+            room : -1 ,
+            sub : new redis()
+>>>>>>> d3f9631a5e3a54a292cb7fa9cb10dfcb6084ca3a
         };
         //  console.log(this.state.socket)
         this.handleChange = this.handleChange.bind(this);
@@ -118,11 +134,15 @@ export default class App extends Component {
                 throw new Error(`${json.result} ${json.message}`);
             }
 
+<<<<<<< HEAD
             // await this.state.socket.emit("getMessage", {
             //     name: this.state.name,
             //     message: this.state.message,
             //     room: this.state.room
             // });
+=======
+            await this.state.sub.on(`${this.state.room}` ,(channel,mesage) => {
+>>>>>>> d3f9631a5e3a54a292cb7fa9cb10dfcb6084ca3a
 
 
 

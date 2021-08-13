@@ -1,4 +1,4 @@
-
+const redis = require('redis')
 (function (exports) {
 
 

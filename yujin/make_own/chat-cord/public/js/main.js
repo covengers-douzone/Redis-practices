@@ -21,7 +21,7 @@ const sendMessage = function (msg) {
         dataType: "json", // 받을 때 format
         type: "get", // 요청 method
         success: function (response) {
-
+            console.log('success');
         }
     });
 }
