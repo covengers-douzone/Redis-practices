@@ -32,7 +32,7 @@ const client = redis.createClient({ host: "localhost", port: 6379 });
 // client.auth("redis","root" ,(err) =>{
 //     console.error(err);
 // });
-const subClient = client.duplicate();
+const subClients = [];
 
 // variances
 const botName = 'Bot';
@@ -59,14 +59,27 @@ const io = socketio(server);
 io.on('connection', socket => {
     socket.on('joinRoom',({username,room})=>{
         const user = userJoin(socket.id,username,room);
-        socket.join(user.room); // room 입장
-        subClient.subscribe(room);
 
-        subClient.on('subscribe', (room, count)=>{
-            console.log(room, count); // channel, count
+        // sub
+        const subClient = {
+            socketid: socket.id,
+            subClient: redis.createClient({ host: "localhost", port: 6379 })
+        }
+        subClient['subClient'].subscribe(`${room}`);
+        subClient['subClient'].on('message', (roomName, message) => {
+            // message : JavaScript:배유진:안녕~:3:05 pm
+            const [redisRoomName, redisUsername, redisMessage, redisHour, redisMin] = message.split(':');
+            socket.emit('message', {
+                username: redisUsername,
+                text: redisMessage,
+                time: `${redisHour}:${redisMin}`
+            })
         })
+        subClients.push(subClient);
 
-        //socket.emit('subClient',subClient);
+        socket.emit();
+        socket.join(user.room); // room 입장
+
         // init
         beforeMessage(socket,room);   // redis에 저장된 메세지들 모두 보여줌
         // welcome message
@@ -84,26 +97,19 @@ io.on('connection', socket => {
         const user = userLeave(socket.id);
 
         if(user){
+            // 나간사람에 대한 알림 메세지
             io.to(user.room).emit('message',formatMessage(botName, `${user.username} has left the chat`));
-            
-            // Send users and room info
+
+            // 나간 사람은 user 목록에서 지움
             io.to(user.room).emit('roomUsers', {
                 room: user.room,
                 users: getRoomUsers(user.room)
             });
+
+            // unsubscribe && 객체 없애기
+            const subClient = subClients.filter((subClient) => { return (subClient['socketid'] === socket.id)});
+            subClient['subClient'].unsubscribe();
+            
         }
     });
-
-    // sub
-    subClient.on('message', (roomName, message) => {
-        // message : JavaScript:배유진:안녕~:3:05 pm
-        const [redisRoomName, redisUsername, redisMessage, redisHour, redisMin] = message.split(':');
-        if(redisRoomName === roomName){
-            socket.emit('message', {
-                username: redisUsername,
-                text: redisMessage,
-                time: `${redisHour}:${redisMin}`
-            })
-        }
-    })
 });
