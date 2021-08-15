@@ -11,9 +11,34 @@ module.exports = {
     sendMessage: async function(req, res, next) {
         try {
             const {roomName, sender, message} = req.query;
-            const chat = await models.User.findAll();
-            console.log(chat);
-            console.log(chat.length);
+            const senderRoom = await models.Room.findOne({
+                where: {
+                    title: roomName
+                }
+            })
+            const senderInfo = await models.User.findOne({
+                where: {
+                    name: sender
+                }
+            });
+            const offlineParticipants = await models.Participant.findAll({
+                where: {
+                    status: false,
+                    roomNo: senderRoom.no
+                }
+            });
+            const participantNo = await models.Participant.findOne({
+                where: {
+                    roomNo: senderRoom.no,
+                    userNo: senderInfo.no
+                }
+            });
+            const results = await models.Chat.create({
+                type: 'text',
+                contents: message,
+                read: offlineParticipants.length,
+                participantNo: participantNo.no
+            });
             const messageInfo = {
                 sender: sender,
                 roomName: roomName,
