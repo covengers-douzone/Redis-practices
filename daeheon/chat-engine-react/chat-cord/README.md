@@ -31,7 +31,7 @@
         |--- package-lock.json          [modules 버전 정보]
         |--- /public
         |       |--- /css/style.css
-        |       |--- /js/main.js        [chat client]
+        |       |--- /js/chat.js        [chat client]
         |       |--- chat.html          [채팅 화면]
         |       |--- index.html         [첫 화면]
         |--- /utils

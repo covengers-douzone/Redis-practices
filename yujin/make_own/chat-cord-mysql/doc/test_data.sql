@@ -22,6 +22,7 @@ insert into room values(null,'Java',null,'public', now());
 -- participant
 desc participant;
 select * from participant;
+select * from participant p join user u on p.userNo = u.no;
 
 update participant p join user u on p.userNo = u.no join room r on  p.roomNo = r.no 
 set status = 'false'
@@ -39,5 +40,6 @@ insert into participant values(null,'member','true',now(),now(),2,3);
 -- chat
 desc chat;
 select * from chat;
-insert into chat values(null, 'text', now(), 'hi, I am tae',  0, 1);
-insert into chat values(null, 'text', now(), 'hello~',  0, 2);
+delete from chat;
+insert into chat values(1, 'text', now(), 'hi, I am tae',  0, 1);
+insert into chat values(2, 'text', now(), 'hello~',  0, 2);
