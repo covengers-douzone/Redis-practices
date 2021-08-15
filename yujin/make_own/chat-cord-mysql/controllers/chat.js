@@ -10,8 +10,26 @@ const pubClient = client.duplicate();
 module.exports = {
     updateStatus: async function(req,res,next) {
         try{
-            const results = await models.Participant.update({
-            })
+            const {userName, roomName, status} = req.query;
+            const userRoom = await models.Room.findOne({where: {title: roomName}})
+            const userInfo = await models.User.findOne({where: {name: userName}});
+            const results = await models.Participant.update(
+                {
+                    status: status
+                },{
+                    where: {
+                        userNo: userInfo.no,
+                        roomNo: userRoom.no,
+                    }
+                }
+            )
+            res
+                .status(200)
+                .send({
+                    result: 'success',
+                    data: results,
+                    message: null
+                });
         } catch(err){
             console.error(err);
             next(err);
@@ -33,10 +51,11 @@ module.exports = {
             });
             const offlineParticipants = await models.Participant.findAll({
                 where: {
-                    status: false,
+                    status: 'false',
                     roomNo: senderRoom.no
                 }
             });
+            console.log(offlineParticipants.length);
             const participantNo = await models.Participant.findOne({
                 where: {
                     roomNo: senderRoom.no,

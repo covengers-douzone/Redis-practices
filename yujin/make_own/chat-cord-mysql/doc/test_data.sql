@@ -22,6 +22,12 @@ insert into room values(null,'Java',null,'public', now());
 -- participant
 desc participant;
 select * from participant;
+
+update participant p join user u on p.userNo = u.no join room r on  p.roomNo = r.no 
+set status = 'false'
+where p.no > 1;
+-- where u.name = 'tae' and r.title = 'JavaScript';
+
 -- 방'JavaScript'에 host tae, member dada & we (participant no :1,2,3)
 insert into participant values(null,'host','true',now(),now(),1,1);     -- participant no 1
 insert into participant values(null,'member','true',now(),now(),1,2);

@@ -61,6 +61,20 @@ $(function () {
     $('#leave-btn').click(() => {
         const leaveRoom = confirm('Are you sure you want to leave the chatroom?');
         if (leaveRoom) {
+            // update status : false
+            $.ajax({
+                url: "/api/status",
+                data: {
+                    userName: username,         // 나중에 변경해야할듯?
+                    roomName: room,
+                    status: false
+                },
+                dataType: "json", // 받을 때 format
+                type: "get", // 요청 method
+                success: function (response) {
+                    console.log('success');
+                }
+            });
             window.location = '../index.html';
         } else {
         }
@@ -105,6 +119,6 @@ $(function () {
 
     // Add users to DOM
     const outputUsers = (users) => {
-        userList.append( `${users.map(user => `<li>${user.username}</li>`).join('')}`);
+        userList.append(`${users.map(user => `<li>${user.username}</li>`).join('')}`);
     }
 })

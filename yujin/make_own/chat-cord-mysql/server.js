@@ -61,6 +61,9 @@ function beforeMessage(socket,room){
 const io = socketio(server);
 // Run when client connects
 io.on('connection', socket => {
+    socket.on('connect',()=>{
+        console.log('connection');
+    });
     socket.on('joinRoom',({username,room})=>{
         const user = userJoin(socket.id,username,room);
 
@@ -98,7 +101,6 @@ io.on('connection', socket => {
     // Runs when client disconnects
     socket.on('disconnect',()=>{
         const user = userLeave(socket.id);
-
         if(user){
             // 나간사람에 대한 알림 메세지
             io.to(user.room).emit('message',formatMessage(botName, `${user.username} has left the chat`));
