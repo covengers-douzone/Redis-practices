@@ -1,8 +1,7 @@
 const { Sequelize, DataTypes } = require('sequelize');
 
 module.exports = function(sequelize){
-    // foreign Key : (Participant)participant_no
-    return sequelize.define('Chat', {
+    return sequelize.define('Room', {
         no: {
             field: 'no',
             type: DataTypes.INTEGER,
@@ -10,24 +9,24 @@ module.exports = function(sequelize){
             autoIncrement: true,
             allowNull: false
         },
+        title: {
+            field: 'title',
+            type: DataTypes.STRING(45),
+            allowNull: false
+        },
+        password: {
+            field: 'password',
+            type: DataTypes.STRING(45),
+            allowNull: true
+        },
         type: {
             field: 'type',
-            type: DataTypes.STRING(45),
+            type: DataTypes.ENUM('private', 'public'),
             allowNull: false
         },
         createdAt: {
             field: 'createdAt',
             type: DataTypes.DATE,
-            allowNull: false
-        },
-        contents: {
-            field: 'contents',
-            type: DataTypes.TEXT('long'),
-            allowNull: false
-        },
-        read: {
-            field: 'read',
-            type: DataTypes.INTEGER,
             allowNull: false
         }
     }, {
@@ -36,6 +35,6 @@ module.exports = function(sequelize){
         timestamps: true,
         createdAt: false,
         updatedAt: false,
-        tableName: 'chat'
+        tableName: 'room'
     });
 }

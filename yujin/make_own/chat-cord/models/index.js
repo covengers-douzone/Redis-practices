@@ -11,39 +11,65 @@ const sequelize = new Sequelize(
     }
 );
 
-//const User = require('./User')(sequelize);
+const Room = require('./Room')(sequelize);
+const User = require('./User')(sequelize);
+const Participant = require('./Participant')(sequelize);
+const Chat = require('./Chat')(sequelize);
 
+// Room : Participant = 1 : N
+Room.hasMany(Participant, {
+    foreignKey: {
+        name: 'roomNo',
+        allowNull: false,
+        constraints: false,
+        onDelete: 'cascade'
+    }
+});
+Participant.belongsTo(Room, {
+    foreignKey: 'roomNo'
+});
 
-// 1:N
-// User.hasMany(Board,{
-//     foreignKey: {
-//         name: 'user_no',
-//         allowNull: false,
-//         constraints: true,
-//         onDelete: 'CASCADE'
-//     },
-// });
-// Board.belongsTo(User);
-//
-// User.sync({
-//     force: process.env.TABLE_CREATE_ALWAYS === 'true', // true : (drop) table 데이터 없어질 수 있음
-//     alter: process.env.TABLE_ALTER_SYNC === 'true'     // 개발 끝나면 false로 하기
-// })
-// Guestbook.sync({
-//     force: process.env.TABLE_CREATE_ALWAYS === 'true',
-//     alter: process.env.TABLE_ALTER_SYNC === 'true'
-// })
-// Gallery.sync({
-//     force: process.env.TABLE_CREATE_ALWAYS === 'true',
-//     alter: process.env.TABLE_ALTER_SYNC === 'true'
-// })
-// Site.sync({
-//     force: process.env.TABLE_CREATE_ALWAYS === 'true',
-//     alter: process.env.TABLE_ALTER_SYNC === 'true'
-// })
-// Board.sync({
-//     force: process.env.TABLE_CREATE_ALWAYS === 'true',
-//     alter: process.env.TABLE_ALTER_SYNC === 'true'
-// })
-//module.exports = {sequelize, User,Guestbook,Gallery,Site,Board };
-module.exports = {sequelize};
+// // User : Participant = 1 : N
+User.hasMany(Participant, {
+    foreignKey: {
+        name: 'userNo',
+        allowNull: false,
+        constraints: false,
+        onDelete: 'cascade'
+    }
+});
+Participant.belongsTo(User, {
+    foreignKey: 'userNo'
+});
+
+// Participant : Chat = 1 : N
+Participant.hasMany(Chat, {
+    foreignKey: {
+        name: 'participantNo',
+        allowNull: false,
+        constraints: false,
+        onDelete: 'cascade'
+    }
+});
+Chat.belongsTo(Participant, {
+    foreignKey: 'participantNo'
+});
+
+Room.sync({
+    force: process.env.TABLE_CREATE_ALWAYS === 'true', // true : (drop) table 데이터 없어질 수 있음
+    alter: process.env.TABLE_ALTER_SYNC === 'true'     // 개발 끝나면 false로 하기
+})
+User.sync({
+    force: process.env.TABLE_CREATE_ALWAYS === 'true', // true : (drop) table 데이터 없어질 수 있음
+    alter: process.env.TABLE_ALTER_SYNC === 'true'     // 개발 끝나면 false로 하기
+})
+Chat.sync({
+    force: process.env.TABLE_CREATE_ALWAYS === 'true', // true : (drop) table 데이터 없어질 수 있음
+    alter: process.env.TABLE_ALTER_SYNC === 'true'     // 개발 끝나면 false로 하기
+})
+Participant.sync({
+    force: process.env.TABLE_CREATE_ALWAYS === 'true', // true : (drop) table 데이터 없어질 수 있음
+    alter: process.env.TABLE_ALTER_SYNC === 'true'     // 개발 끝나면 false로 하기
+})
+
+module.exports = {sequelize, Chat, Participant, Room, User};

@@ -1,5 +1,6 @@
 const { response } = require('express');
 const moment = require('moment');
+const models = require('../models');
 
 // redis
 const redis = require("redis");
@@ -10,6 +11,9 @@ module.exports = {
     sendMessage: async function(req, res, next) {
         try {
             const {roomName, sender, message} = req.query;
+            const chat = await models.User.findAll();
+            console.log(chat);
+            console.log(chat.length);
             const messageInfo = {
                 sender: sender,
                 roomName: roomName,
