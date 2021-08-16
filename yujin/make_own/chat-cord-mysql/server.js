@@ -41,22 +41,6 @@ const subClients = [];
 // variances
 const botName = 'Bot';
 
-function beforeMessage(socket,room){
-    // redis-cli) lrange messages 0 -1
-    client.lrange('messages','0','-1',(err,data) => {
-        data.map(x => {
-            const [redisRoomName, redisUsername, redisMessage, redisHour, redisMin] = x.split(':');
-            if(room === redisRoomName){
-                socket.emit('message', {
-                    username: redisUsername,
-                    text: redisMessage,
-                    time: `${redisHour}:${redisMin}`
-                })
-            }
-        });
-    });
-}
-
 // io
 const io = socketio(server);
 // Run when client connects
@@ -86,8 +70,6 @@ io.on('connection', socket => {
 
         socket.join(user.room); // room 입장
 
-        // init
-        beforeMessage(socket,room);   // redis에 저장된 메세지들 모두 보여줌
         // welcome message
         socket.emit('message',formatMessage(botName, '방에 입장하셨습니다.')); // 막 입장한 사람에게 보내는 메세지
         socket.broadcast.to(user.room).emit('message',formatMessage(botName,  `${user.username}님이 채팅방에 입장하였습니다.`)); // 모두에게 들어온 사람을 환영하는 메세지

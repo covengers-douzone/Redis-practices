@@ -9,5 +9,6 @@ router.route('/index').get(controllerIndex.findRoom);
 
 router.route('/status').get(controller.updateStatus);
 router.route('/chat').get(controller.sendMessage);
+router.route('/lastChat').get(controller.findLastChats);
 
 module.exports = router;

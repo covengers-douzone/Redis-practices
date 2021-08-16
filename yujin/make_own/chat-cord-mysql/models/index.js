@@ -1,12 +1,17 @@
-const { Sequelize, DataTypes } = require('sequelize');
+const {Sequelize, DataTypes} = require('sequelize');
 
 const sequelize = new Sequelize(
     process.env.DB_NAME,
     process.env.DB_USER,
-    process.env.DB_PASSWORD,{
+    process.env.DB_PASSWORD, {
         host: process.env.DB_HOST,
         port: process.env.DB_PORT,
         timezone: "+09:00",
+        dialectOptions: {
+            charset: 'utf8mb4',
+            dateStrings: true,
+            typeCast: true
+        },
         dialect: 'mysql'
     }
 );

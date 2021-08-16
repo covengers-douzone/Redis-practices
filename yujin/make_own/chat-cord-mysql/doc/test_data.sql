@@ -40,6 +40,11 @@ insert into participant values(null,'member','true',now(),now(),2,3);
 -- chat
 desc chat;
 select * from chat;
+
+select c.no, c.createdAt, c.contents, c.read, c.participantNo, u.name from chat c 
+join participant p on c.participantNo = p.no
+join user u on p.userNo = u.no;
+
 delete from chat;
 insert into chat values(1, 'text', now(), 'hi, I am tae',  0, 1);
 insert into chat values(2, 'text', now(), 'hello~',  0, 2);

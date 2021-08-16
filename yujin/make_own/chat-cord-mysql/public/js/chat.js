@@ -25,6 +25,33 @@ $(function () {
         }
     });
 
+    // 이전 대화 목록 가지고 오기
+    $.ajax({
+        url: "/api/lastChat",
+        data: {
+            roomName: room
+        },
+        dataType: "json", // 받을 때 format
+        type: "get", // 요청 method
+        success: function (response) {
+            const messages = response.data.map(message => {
+                // bad
+                const time = message.createdAt;
+                const splitedTime = time.split(' ')[1];
+                const h = ('0'+(splitedTime[0] > 12 ? splitedTime[0] - 12 : splitedTime[0])).slice(-2);
+                const m = ('0'+splitedTime[1]).slice(-2);
+                const a = splitedTime[0] > 12 ? 'pm' : 'am';
+
+                return {
+                    username: message.Participant.User.name,
+                    text: message.contents,
+                    time: `${h}:${m} ${a}`
+                }
+            })
+            messages.map(message => outputMessage(message));
+        }
+    });
+
     const socket = io();
 
     // Join chatroom
