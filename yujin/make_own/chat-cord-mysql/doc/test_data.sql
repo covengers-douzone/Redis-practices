@@ -4,7 +4,7 @@ use chat;
 -- user
 desc user;
 select * from user;
-insert into user values(null,'user1','tae','N',now(),null,null,null,'user');
+insert into user values(null,'user1','tae','1111',0,'/image','/image','ROLE_USER','token1111',now(),now(),'tae');
 insert into user values(null,'user2','dada','N',now(),null,null,null,'user');
 insert into user values(null,'user3','we','N',now(),null,null,null,'user');
 insert into user values(null,'user4','wae','N',now(),null,null,null,'user');

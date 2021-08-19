@@ -1,44 +1,52 @@
+-- 테이블 순서는 관계를 고려하여 한 번에 실행해도 에러가 발생하지 않게 정렬되었습니다.
+
+-- ROOM Table Create SQL
 CREATE TABLE ROOM
 (
     `no`         INT                           NOT NULL    AUTO_INCREMENT COMMENT 'no', 
     `title`      VARCHAR(45)                   NOT NULL    COMMENT 'title', 
     `password`   VARCHAR(45)                   NULL        COMMENT 'password', 
-    `type`       ENUM("private","public" )    NOT NULL    COMMENT 'type', 
+    `type`       ENUM("private","public" )    NOT NULL    COMMENT 'public: 오픈 채팅, private: 개인 채팅', 
     `createdAt`  DATETIME                      NOT NULL    COMMENT 'createdAt', 
+    `headCount`  INT                           NOT NULL    DEFAULT 1 COMMENT '방 인원 수', 
     CONSTRAINT PK_ROOM PRIMARY KEY (no)
 );
 
 ALTER TABLE ROOM COMMENT 'ROOM';
 
 
-
+-- USER Table Create SQL
 CREATE TABLE USER
 (
-    `no`                  INT            NOT NULL    AUTO_INCREMENT COMMENT 'no', 
-    `userId`              VARCHAR(45)    NOT NULL    COMMENT 'userID', 
-    `name`                VARCHAR(45)    NOT NULL    COMMENT 'name', 
-    `isDeleted`           CHAR(1)        NOT NULL    DEFAULT 'N' COMMENT 'N:탈퇴 Y:활성', 
-    `createdAt`           DATETIME       NOT NULL    DEFAULT now() COMMENT 'createdAt', 
-    `backgroundImageUrl`  TEXT           NULL        COMMENT 'backgroundImageUrl', 
-    `profileImageUrl`     TEXT           NULL        COMMENT 'profileImageUrl', 
-    `updateAt`            DATETIME       NULL        DEFAULT now() on update now() COMMENT '어떠한 이벤트 발생된 날짜', 
-    `role`                VARCHAR(45)    NULL        COMMENT '이거 enum으로 고치기', 
+    `no`                  INT                                              NOT NULL    AUTO_INCREMENT COMMENT 'no', 
+    `username`            VARCHAR(45)                                      NOT NULL    COMMENT 'email', 
+    `name`                VARCHAR(45)                                      NOT NULL    COMMENT 'name', 
+    `password`            VARCHAR(200)                                     NOT NULL    COMMENT 'password', 
+    `isDeleted`           BOOLEAN                                          NOT NULL    DEFAULT false COMMENT 'false:회원  true:탈퇴', 
+    `backgroundImageUrl`  TEXT                                             NOT NULL    COMMENT 'default background Image', 
+    `profileImageUrl`     TEXT                                             NOT NULL    COMMENT 'default profile Image', 
+    `role`                enum('ROLE_USER','ROLE_ADMIN','ROLE_UNKNOWN')    NOT NULL    COMMENT 'role', 
+    `token`               VARCHAR(200)                                     NULL        COMMENT 'token (만료시간까지)', 
+    `createdAt`           DATETIME                                         NOT NULL    DEFAULT now() COMMENT 'createdAt', 
+    `lastLoginAt`         DATETIME                                         NULL        DEFAULT now() on update now() COMMENT '마지막 로긴 시간', 
+    `nickname`            VARCHAR(45)                                      NULL        COMMENT 'default=>user의 name', 
     CONSTRAINT PK_USER PRIMARY KEY (no)
 );
 
 ALTER TABLE USER COMMENT 'USER';
 
 
-
+-- PARTICIPANT Table Create SQL
 CREATE TABLE PARTICIPANT
 (
-    `no`          INT                     NOT NULL    AUTO_INCREMENT COMMENT 'no', 
-    `role`        VARCHAR(45)             NOT NULL    COMMENT '이거 enum으로 변경하기', 
-    `status`      enum('true','false')    NOT NULL    COMMENT '현재 접속 여부', 
-    `createdAt`   DATETIME                NOT NULL    DEFAULT now() COMMENT 'createdAt', 
-    `lastReadAt`  DATETIME                NOT NULL    COMMENT '마지막 접속시간', 
-    `roomNo`      INT                     NOT NULL    COMMENT 'roomNo', 
-    `userNo`      INT                     NOT NULL    COMMENT 'userNo', 
+    `no`          INT                                NOT NULL    AUTO_INCREMENT COMMENT 'no', 
+    `role`        enum('ROLE_HOST','ROLE_MEMBER')    NOT NULL    COMMENT '채팅방 방장 & 멤버', 
+    `status`      TINYINT                            NOT NULL    COMMENT '현재 접속 여부(1: 접속, 0: 미접속)', 
+    `createdAt`   DATETIME                           NOT NULL    DEFAULT now() COMMENT 'createdAt', 
+    `lastReadAt`  DATETIME                           NOT NULL    COMMENT '마지막 접속시간(채팅방 나가기 click-> update)', 
+    `roomNo`      INT                                NOT NULL    COMMENT 'roomNo', 
+    `userNo`      INT                                NOT NULL    COMMENT 'userNo', 
+    `nickname`    VARCHAR(45)                        NULL        COMMENT 'default=>user의 nickname', 
     CONSTRAINT PK_MEMBER PRIMARY KEY (no)
 );
 
@@ -53,6 +61,7 @@ ALTER TABLE PARTICIPANT
         REFERENCES USER (no) ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 
+-- FRIEND Table Create SQL
 CREATE TABLE FRIEND
 (
     `userNo`    INT    NOT NULL    COMMENT 'userNo', 
@@ -71,15 +80,15 @@ ALTER TABLE FRIEND
         REFERENCES USER (no) ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 
-
+-- CHAT Table Create SQL
 CREATE TABLE CHAT
 (
-    `no`             INT            NOT NULL    AUTO_INCREMENT COMMENT 'no', 
-    `type`           VARCHAR(45)    NOT NULL    DEFAULT 'text' COMMENT 'enum으로 하기:파일인지,텍스트 인지', 
-    `createdAt`      DATETIME       NOT NULL    COMMENT 'createdAt', 
-    `contents`       LONGTEXT       NOT NULL    COMMENT '채팅내용', 
-    `read`           INT            NOT NULL    COMMENT '총 안 읽은 사람 수', 
-    `participantNo`  INT            NOT NULL    COMMENT 'participantNo', 
+    `no`             INT                    NOT NULL    AUTO_INCREMENT COMMENT 'no', 
+    `type`           ENUM("TEXT", "IMG")    NOT NULL    DEFAULT 'text' COMMENT 'enum으로 하기:파일인지,텍스트 인지', 
+    `createdAt`      DATETIME               NOT NULL    DEFAULT now() COMMENT '메시지 발송 시간', 
+    `contents`       LONGTEXT               NOT NULL    COMMENT '채팅내용', 
+    `notReadCount`   INT                    NOT NULL    COMMENT '총 안 읽은 사람 수', 
+    `participantNo`  INT                    NOT NULL    COMMENT 'participantNo', 
     CONSTRAINT PK_CHAT PRIMARY KEY (no)
 );
 
@@ -88,3 +97,4 @@ ALTER TABLE CHAT COMMENT 'CHAT';
 ALTER TABLE CHAT
     ADD CONSTRAINT FK_CHAT_participantNo_PARTICIPANT_no FOREIGN KEY (participantNo)
         REFERENCES PARTICIPANT (no) ON DELETE RESTRICT ON UPDATE RESTRICT;
+
