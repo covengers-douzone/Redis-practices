@@ -36,6 +36,9 @@ module.exports = {
             next(err);
         }
     },
+    updateNotReadCount: async function (req, res, next) {
+
+    },
     sendMessage: async function (req, res, next) {
         // send에서 read 보내야 함
         try {
@@ -56,7 +59,7 @@ module.exports = {
                     roomNo: senderRoom.no
                 }
             });
-            console.log(offlineParticipants.length);
+            //console.log(offlineParticipants.length);
             const participantNo = await models.Participant.findOne({
                 where: {
                     roomNo: senderRoom.no,
@@ -73,10 +76,12 @@ module.exports = {
                 sender: sender,
                 roomName: roomName,
                 message: message,
-                time: moment().format('h:mm a')
+                time: moment().format('h:mm a'),
+                notReadCount: offlineParticipants.length
             }
-            await client.rpush('messages', `${roomName}:${sender}:${message}:${moment().format('h:mm a')}`);
-            await pubClient.publish(`${roomName}`, `${roomName}:${sender}:${message}:${moment().format('h:mm a')}`)
+            // redis (pub) channel:room name , "room name : sender : message contents : date : read"
+            await client.rpush('messages', `${roomName}:${sender}:${message}:${moment().format('h:mm a')}:${offlineParticipants.length}`);
+            await pubClient.publish(`${roomName}`, `${roomName}:${sender}:${message}:${moment().format('h:mm a')}:${offlineParticipants.length}`)
             res
                 .status(200)
                 .send({

@@ -25,6 +25,21 @@ $(function () {
         }
     });
 
+    // update notReadCount
+    $.ajax({
+        url: "/api/updateNotReadCount",
+        // data: {
+        //     userName: username,         // 나중에 변경해야할듯?
+        //     roomName: room,
+        //     status: 1
+        // },
+        dataType: "json", // 받을 때 format
+        type: "get", // 요청 method
+        success: function (response) {
+            console.log('success');
+        }
+    });
+
     // 이전 대화 목록 가지고 오기
     $.ajax({
         url: "/api/lastChat",
@@ -45,7 +60,8 @@ $(function () {
                 return {
                     username: message.Participant.User.name,
                     text: message.contents,
-                    time: `${h}:${m} ${a}`
+                    time: `${h}:${m} ${a}`,
+                    notReadCount: message.notReadCount
                 }
             })
             messages.map(message => outputMessage(message));
@@ -131,7 +147,7 @@ $(function () {
         const div = document.createElement('div');
         div.classList.add('message');
         div.innerHTML = `
-          <p class="meta">${message.username}<span>${message.time}</span></p>
+          <p class="meta">${message.username}   <span>${message.time}</span>   <span>${message.notReadCount}</span></p>
           <p class="text">
             ${message.text}
           </p>

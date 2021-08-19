@@ -45,9 +45,6 @@ const botName = 'Bot';
 const io = socketio(server);
 // Run when client connects
 io.on('connection', socket => {
-    socket.on('connect',()=>{
-        console.log('connection');
-    });
     socket.on('joinRoom',({username,room})=>{
         const user = userJoin(socket.id,username,room);
 
@@ -59,11 +56,12 @@ io.on('connection', socket => {
         subClient['subClient'].subscribe(`${room}`);
         subClient['subClient'].on('message', (roomName, message) => {
             // message : JavaScript:배유진:안녕~:3:05 pm
-            const [redisRoomName, redisUsername, redisMessage, redisHour, redisMin] = message.split(':');
+            const [redisRoomName, redisUsername, redisMessage, redisHour, redisMin, notReadCount] = message.split(':');
             socket.emit('message', {
                 username: redisUsername,
                 text: redisMessage,
-                time: `${redisHour}:${redisMin}`
+                time: `${redisHour}:${redisMin}`,
+                notReadCount : notReadCount
             })
         })
         subClients.push(subClient);
