@@ -33,7 +33,7 @@ where p.no > 1;
 insert into participant values(null,'host','true',now(),now(),1,1);     -- participant no 1
 insert into participant values(null,'member','true',now(),now(),1,2);
 insert into participant values(null,'member','true',now(),now(),1,3);
--- 방'JavaScript'에 host tae, member we (participant no :4,5)
+-- 방'Python'에 host tae, member we (participant no :4,5)
 insert into participant values(null,'host','true',now(),now(),2,1);
 insert into participant values(null,'member','true',now(),now(),2,3);
 

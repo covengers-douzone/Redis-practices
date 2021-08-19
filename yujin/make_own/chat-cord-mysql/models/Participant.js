@@ -12,12 +12,12 @@ module.exports = function(sequelize){
         },
         role: {
             field: 'role',
-            type: DataTypes.STRING(45),
+            type: DataTypes.ENUM('ROLE_HOST', 'ROLE_MEMBER'),
             allowNull: false
         },
         status: {
             field: 'status',
-            type: DataTypes.ENUM('true', 'false'),
+            type: DataTypes.TINYINT,
             allowNull: false
         },
         createdAt: {
@@ -30,7 +30,12 @@ module.exports = function(sequelize){
             field: 'lastReadAt',
             type: DataTypes.DATE,
             allowNull: false
-        }
+        },
+        nickname: {
+            field: 'nickname',
+            type: DataTypes.STRING(45),
+            allowNull: true
+        },
     }, {
         underscored: false, // updateAt -> updateAt (underscored: update_at)
         freezeTableName: true,

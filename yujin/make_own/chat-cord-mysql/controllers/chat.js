@@ -52,7 +52,7 @@ module.exports = {
             });
             const offlineParticipants = await models.Participant.findAll({
                 where: {
-                    status: 'false',
+                    status: 0,
                     roomNo: senderRoom.no
                 }
             });
@@ -66,8 +66,8 @@ module.exports = {
             const results = await models.Chat.create({
                 type: 'text',
                 contents: message,
-                read: offlineParticipants.length,
-                participantNo: participantNo.no
+                notReadCount: offlineParticipants.length,
+                participantNo: participantNo.no,
             });
             const messageInfo = {
                 sender: sender,

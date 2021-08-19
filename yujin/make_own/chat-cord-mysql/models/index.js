@@ -20,6 +20,7 @@ const Room = require('./Room')(sequelize);
 const User = require('./User')(sequelize);
 const Participant = require('./Participant')(sequelize);
 const Chat = require('./Chat')(sequelize);
+const Friend = require('./Friend')(sequelize);
 
 // Room : Participant = 1 : N
 Room.hasMany(Participant, {
@@ -60,6 +61,31 @@ Chat.belongsTo(Participant, {
     foreignKey: 'participantNo'
 });
 
+// User : Friend = 1 : N
+User.hasMany(Friend, {
+    foreignKey: {
+        name: 'userNo',
+        allowNull: false,
+        constraints: false,
+        onDelete: 'cascade'
+    }
+});
+Friend.belongsTo(User, {
+    foreignKey: 'userNo'
+});
+
+User.hasMany(Friend, {
+    foreignKey: {
+        name: 'friendNo',
+        allowNull: false,
+        constraints: false,
+        onDelete: 'cascade'
+    }
+});
+Friend.belongsTo(User, {
+    foreignKey: 'friendNo'
+});
+
 Room.sync({
     force: process.env.TABLE_CREATE_ALWAYS === 'true', // true : (drop) table 데이터 없어질 수 있음
     alter: process.env.TABLE_ALTER_SYNC === 'true'     // 개발 끝나면 false로 하기
@@ -76,5 +102,9 @@ Participant.sync({
     force: process.env.TABLE_CREATE_ALWAYS === 'true', // true : (drop) table 데이터 없어질 수 있음
     alter: process.env.TABLE_ALTER_SYNC === 'true'     // 개발 끝나면 false로 하기
 })
+Friend.sync({
+    force: process.env.TABLE_CREATE_ALWAYS === 'true', // true : (drop) table 데이터 없어질 수 있음
+    alter: process.env.TABLE_ALTER_SYNC === 'true'     // 개발 끝나면 false로 하기
+})
 
-module.exports = {sequelize, Chat, Participant, Room, User};
+module.exports = {sequelize, Chat, Participant, Room, User, Friend};

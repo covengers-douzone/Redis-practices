@@ -9,24 +9,24 @@ module.exports = function(sequelize){
             autoIncrement: true,
             allowNull: false
         },
-        userID: {
-            field: 'userID',
+        username: {
+            field: 'username',
             type: DataTypes.STRING(45),
             allowNull: false
         },
         name: {
             field: 'name',
             type: DataTypes.STRING(45),
-            allowNull: true
+            allowNull: false
+        },
+        password: {
+            field: 'password',
+            type: DataTypes.STRING(200),
+            allowNull: false
         },
         isDeleted: {
             field: 'isDeleted',
-            type: DataTypes.CHAR(1),
-            allowNull: false
-        },
-        createdAt: {
-            field: 'createdAt',
-            type: DataTypes.DATE,
+            type: DataTypes.TINYINT,
             allowNull: false
         },
         backgroundImageUrl: {
@@ -39,15 +39,32 @@ module.exports = function(sequelize){
             type: DataTypes.TEXT,
             allowNull: true
         },
-        updateAt: {
-            field: 'updateAt',
-            type: DataTypes.DATE,
-            allowNull: true
-        },
         role: {
             field: 'role',
-            type: DataTypes.STRING(45),
+            type: DataTypes.ENUM('ROLE_USER', 'ROLE_ADMIN','ROLE_UNKNOWN'),
             allowNull: false
+        },
+        token: {
+            field: 'token',
+            type: DataTypes.STRING(200),
+            allowNull: true
+        },
+        createdAt: {
+            field: 'createdAt',
+            type: DataTypes.DATE,
+            allowNull: false,
+            defaultValue: Sequelize.NOW
+        },
+        lastLoginAt: {
+            field: 'lastLoginAt',
+            type: DataTypes.DATE,
+            allowNull: true,
+            defaultValue: Sequelize.NOW
+        },
+        nickname: {
+            field: 'nickname',
+            type: DataTypes.STRING(45),
+            allowNull: true
         },
     }, {
         underscored: false, // updateAt -> updateAt (underscored: update_at)

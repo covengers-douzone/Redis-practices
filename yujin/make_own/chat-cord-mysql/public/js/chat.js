@@ -16,7 +16,7 @@ $(function () {
         data: {
             userName: username,         // 나중에 변경해야할듯?
             roomName: room,
-            status: true
+            status: 1
         },
         dataType: "json", // 받을 때 format
         type: "get", // 요청 method
@@ -94,7 +94,7 @@ $(function () {
                 data: {
                     userName: username,         // 나중에 변경해야할듯?
                     roomName: room,
-                    status: false
+                    status: 0
                 },
                 dataType: "json", // 받을 때 format
                 type: "get", // 요청 method
@@ -146,6 +146,7 @@ $(function () {
 
     // Add users to DOM
     const outputUsers = (users) => {
+        userList.empty();
         userList.append(`${users.map(user => `<li>${user.username}</li>`).join('')}`);
     }
 })

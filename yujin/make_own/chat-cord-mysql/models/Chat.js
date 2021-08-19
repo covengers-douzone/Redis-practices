@@ -12,7 +12,7 @@ module.exports = function(sequelize){
         },
         type: {
             field: 'type',
-            type: DataTypes.STRING(45),
+            type: DataTypes.ENUM('TEXT','IMG'),
             allowNull: false
         },
         createdAt: {
@@ -26,8 +26,8 @@ module.exports = function(sequelize){
             type: DataTypes.TEXT('long'),
             allowNull: false
         },
-        read: {
-            field: 'read',
+        notReadCount: {
+            field: 'notReadCount',
             type: DataTypes.INTEGER,
             allowNull: false
         }
