@@ -21,6 +21,7 @@ CREATE TABLE USER
     `no`                  INT                                              NOT NULL    AUTO_INCREMENT COMMENT 'no', 
     `username`            VARCHAR(45)                                      NOT NULL    COMMENT 'email', 
     `name`                VARCHAR(45)                                      NOT NULL    COMMENT 'name', 
+    `phoneNumber`         VARCHAR(11)                                      NOT NULL    COMMENT '핸드폰번호', 
     `password`            VARCHAR(200)                                     NOT NULL    COMMENT 'password', 
     `isDeleted`           BOOLEAN                                          NOT NULL    DEFAULT false COMMENT 'false:회원  true:탈퇴', 
     `backgroundImageUrl`  TEXT                                             NOT NULL    COMMENT 'default background Image', 
@@ -84,11 +85,12 @@ ALTER TABLE FRIEND
 CREATE TABLE CHAT
 (
     `no`             INT                    NOT NULL    AUTO_INCREMENT COMMENT 'no', 
-    `type`           ENUM("TEXT", "IMG")    NOT NULL    DEFAULT 'text' COMMENT 'enum으로 하기:파일인지,텍스트 인지', 
+    `roomNo`         INT                    NOT NULL    COMMENT 'roomNo', 
+    `type`           ENUM("TEXT", "IMG")    NOT NULL    DEFAULT 'text' COMMENT 'type', 
     `createdAt`      DATETIME               NOT NULL    DEFAULT now() COMMENT '메시지 발송 시간', 
-    `contents`       LONGTEXT               NOT NULL    COMMENT '채팅내용', 
+    `contents`       LONGTEXT               NULL        COMMENT '채팅내용', 
     `notReadCount`   INT                    NOT NULL    COMMENT '총 안 읽은 사람 수', 
-    `participantNo`  INT                    NOT NULL    COMMENT 'participantNo', 
+    `participantNo`  INT                    NULL        COMMENT 'participantNo', 
     CONSTRAINT PK_CHAT PRIMARY KEY (no)
 );
 
@@ -97,4 +99,5 @@ ALTER TABLE CHAT COMMENT 'CHAT';
 ALTER TABLE CHAT
     ADD CONSTRAINT FK_CHAT_participantNo_PARTICIPANT_no FOREIGN KEY (participantNo)
         REFERENCES PARTICIPANT (no) ON DELETE RESTRICT ON UPDATE RESTRICT;
+
 
